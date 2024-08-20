@@ -3,10 +3,8 @@ package gg.xp.xivgear.dataapi.datamanager
 import gg.xp.xivapi.XivApiClient
 import gg.xp.xivapi.clienttypes.XivApiObject
 import gg.xp.xivapi.filters.SearchFilter
-import gg.xp.xivapi.filters.SearchFilters
 import gg.xp.xivapi.pagination.ListOptions
 import gg.xp.xivgear.dataapi.models.*
-import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.micronaut.context.annotation.Context
 import jakarta.inject.Singleton
@@ -20,7 +18,6 @@ import static gg.xp.xivapi.filters.SearchFilters.*
 
 @Context
 @Singleton
-
 @Slf4j
 class DataManager {
 
@@ -29,9 +26,12 @@ class DataManager {
 	private final Future<FullData> dataFuture
 	private final XivApiClient client
 
-	private static final int minIlvl = 600
+	private static final int minIlvl = 290
+//	private static final int minIlvl = 570
+//	private static final int maxIlvl = 310
+//	private static final int minIlvl = 680
 	private static final int maxIlvl = 999
-	private static final int minIlvlFood = 600
+	private static final int minIlvlFood = 430
 	private static final int maxIlvlFood = 999
 
 
@@ -50,16 +50,16 @@ class DataManager {
 			client.defaultListOpts = opts
 
 			log.info "Loading BaseParams"
-			List<BaseParam> baseParams = client.getListIterator(BaseParam).toList()
+			List<BaseParam> baseParams = client.getListIterator(BaseParam).toList().toSorted { it.rowId }
 			log.info "Loaded ${baseParams.size()} BaseParams"
 
 			log.info "Loading ItemLevel"
-			List<ItemLevel> itemLevels = client.getListIterator(ItemLevel).toList()
+			List<ItemLevel> itemLevels = client.getListIterator(ItemLevel).toList().toSorted { it.rowId }
 			log.info "Loaded ${itemLevels.size()} ItemLevels"
 
 			log.info "Loading ClassJob"
-			SearchFilter combatJobsOnly = isTrue("CanQueueForDuty")
-			List<ClassJob> jobs = client.getSearchIterator(ClassJob, combatJobsOnly).toList()
+			SearchFilter combatJobsOnly = gt("PrimaryStat", 0)
+			List<ClassJob> jobs = client.getSearchIterator(ClassJob, combatJobsOnly).toList().toSorted { it.rowId }
 			log.info "Loaded ${jobs.size()} ClassJobs"
 
 			log.info "Loading Items"
@@ -74,11 +74,14 @@ class DataManager {
 							}
 					)
 			)
-			List<ItemBase> itemBases = client.getSearchIterator(ItemBase, itemFilter).toList()
+			List<ItemBase> itemBases = client.getSearchIterator(ItemBase, itemFilter).toList().toSorted { it.rowId }
 			log.info "Loaded ${itemBases.size()} Items"
 
 			log.info "Loading Materia"
-			List<Materia> materia = client.getListIterator(Materia).toList()
+			SearchFilter materiaFilter = and(
+					gt(any("Item"), 0)
+			)
+			List<Materia> materia = client.getSearchIterator(Materia, materiaFilter).toList().<Materia> toSorted { it.rowId }
 			log.info "Loaded ${materia.size()} Materia"
 
 			log.info "Loading Food"
@@ -95,23 +98,24 @@ class DataManager {
 				foodBonuses[it.rowId] = it
 			}
 
-			List<FoodItem> food = bases.collectMany {
+			List<Food> food = bases.collectMany {
 				int bonusId = it.foodItemId
 				FoodItemFood itemFood = foodBonuses[bonusId]
 				if (itemFood == null) {
 					log.error "Food item ${it} did not have corresponding ItemFood ID ${bonusId}"
+					return []
 				}
 				else {
-					return [new FoodItem(it, itemFood)]
+					return [new FoodImpl(it, itemFood)]
 				}
-			}
+			}.<Food> toSorted { it.rowId }
 			log.info "Loaded ${food.size()} Foods"
 
 			return new FullData(baseParams, itemBases, itemLevels, jobs, materia, food)
 		}
 		catch (Throwable t) {
 			log.error("Error getting data", t)
-			throw t;
+			throw t
 		}
 	}
 

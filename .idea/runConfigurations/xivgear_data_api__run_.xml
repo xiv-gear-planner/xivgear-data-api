@@ -18,7 +18,7 @@
           <option value="run" />
         </list>
       </option>
-      <option name="vmOptions" />
+      <option name="vmOptions" value="-Dmicronaut.openapi.json.format=false" />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>

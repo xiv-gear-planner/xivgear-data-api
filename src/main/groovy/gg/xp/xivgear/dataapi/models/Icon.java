@@ -18,7 +18,7 @@ public interface Icon extends XivApiStruct {
 
 	default URI getPngIconUrl() {
 		try {
-			return new URI("https://beta.xivapi.com/api/1/asset/" + getPath() + "?format=png");
+			return new URI("https://beta.xivapi.com/api/1/asset/" + getPathHD() + "?format=png");
 		}
 		catch (URISyntaxException e) {
 			throw new RuntimeException(e);

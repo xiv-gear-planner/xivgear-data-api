@@ -3,9 +3,8 @@ package gg.xp.xivgear.dataapi.models
 
 import groovy.transform.TupleConstructor
 
-//
 @TupleConstructor(includeFields = true, defaults = false)
-class FoodItem {
+class FoodImpl implements Food {
 
 	@Delegate
 	private final FoodItemBase base
@@ -30,5 +29,4 @@ class FoodItem {
 		}
 		return out
 	}
-
 }

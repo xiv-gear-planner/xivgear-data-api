@@ -14,7 +14,7 @@ class FullData implements Serializable {
 	final List<ItemLevel> itemLevels
 	final List<ClassJob> jobs
 	final List<Materia> materia
-	final List<FoodItem> food
+	final List<Food> food
 
 
 }

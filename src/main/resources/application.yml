@@ -1,8 +1,17 @@
 micronaut:
   application:
     name: xivgear-data-api
+  server:
+    cors:
+      enabled: true
   openapi:
     enabled: true
+    config:
+      property-naming-strategy: gg.xp.xivgear.dataapi.serialization.CapitalizedPropertyNamingStrategy
+  swagger:
+    enabled: true
+    config:
+      property-naming-strategy: gg.xp.xivgear.dataapi.serialization.CapitalizedPropertyNamingStrategy
   swagger-ui:
     enabled: true
   router:
