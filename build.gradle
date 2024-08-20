@@ -1,0 +1,71 @@
+plugins {
+	id 'groovy'
+	id 'io.micronaut.application' version '4.4.2'
+	id 'io.micronaut.openapi' version '4.4.2'
+}
+
+group = 'gg.xp'
+version = '1.0-SNAPSHOT'
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+micronaut {
+	version "4.4.2"
+	runtime "netty"
+	testRuntime "junit5"
+}
+
+dependencies {
+	implementation 'org.apache.groovy:groovy:4.0.22'
+	implementation group: 'gg.xp', name: 'xivapi-java', version: '1.0-SNAPSHOT'
+	testImplementation platform('org.junit:junit-bom:5.11.0')
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+
+	implementation "io.micronaut:micronaut-runtime"
+	implementation "jakarta.annotation:jakarta.annotation-api"
+	implementation "io.micronaut.openapi:micronaut-openapi"
+	implementation "io.swagger.core.v3:swagger-annotations"
+//	implementation "io.swagger.core.v3:swagger-ui"
+	implementation "io.micronaut.validation:micronaut-validation"
+	annotationProcessor("io.micronaut.openapi:micronaut-openapi")
+
+	implementation 'org.slf4j:slf4j-api:2.0.12'
+	runtimeOnly 'ch.qos.logback:logback-classic:1.5.7'
+
+	// Jackson JSON support
+	implementation("io.micronaut:micronaut-jackson-databind")
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
+
+	// For dependency injection
+	implementation "io.micronaut:micronaut-inject"
+	// https://mvnrepository.com/artifact/jakarta.inject/jakarta.inject-api
+	implementation group: 'jakarta.inject', name: 'jakarta.inject-api', version: '2.0.1'
+
+
+	// Test dependencies
+	testImplementation("io.micronaut.test:micronaut-test-junit5")
+	testImplementation("org.junit.jupiter:junit-jupiter-api")
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+}
+
+test {
+	useJUnitPlatform()
+}
+
+application {
+	mainClass.set "gg.xp.xivgear.dataapi.Main"
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.withType(GroovyCompile).configureEach {
+	groovyOptions.configurationScript = file(project.rootDir.toPath().resolve("groovyconfig.groovy").toFile())
+	groovyOptions.fork = true
+	groovyOptions.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=swagger-ui.enabled=true'
+}
