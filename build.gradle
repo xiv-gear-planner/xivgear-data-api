@@ -4,12 +4,12 @@ plugins {
 	id 'io.micronaut.openapi' version '4.4.2'
 }
 
-group = 'gg.xp'
+group = 'app.xivgear'
 version = '1.0-SNAPSHOT'
 
 repositories {
 	mavenCentral()
-	mavenLocal()
+//	mavenLocal()
 }
 
 micronaut {
@@ -20,7 +20,8 @@ micronaut {
 
 dependencies {
 	implementation 'org.apache.groovy:groovy:4.0.22'
-	implementation group: 'gg.xp', name: 'xivapi-java', version: '1.0-SNAPSHOT'
+	implementation group: 'app.xivgear', name: 'xivapi-java', version: '0.1.0'
+
 	testImplementation platform('org.junit:junit-bom:5.11.0')
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 
