@@ -18,6 +18,10 @@ micronaut {
 	testRuntime "junit5"
 }
 
+tasks.named("dockerfile") {
+	baseImage = "openjdk:21"
+}
+
 dependencies {
 	implementation 'org.apache.groovy:groovy:4.0.22'
 	implementation group: 'app.xivgear', name: 'xivapi-java', version: '0.1.0'
