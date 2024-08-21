@@ -57,7 +57,7 @@ jobs:
 
       - name: Test and publish package
         # Sonatype central does not support snapshots
-        run: ./gradlew dockerfile
+        run: ./gradlew build dockerfile
 
       - name: Build and export
         uses: docker/build-push-action@v6
