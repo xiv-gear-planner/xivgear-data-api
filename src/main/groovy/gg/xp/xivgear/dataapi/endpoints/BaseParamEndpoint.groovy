@@ -5,6 +5,7 @@ import gg.xp.xivgear.dataapi.datamanager.FullData
 import gg.xp.xivgear.dataapi.models.BaseParam
 import groovy.transform.TupleConstructor
 import io.micronaut.context.annotation.Context
+import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
@@ -13,15 +14,12 @@ import io.micronaut.http.annotation.Produces
 import io.swagger.v3.oas.annotations.Operation
 
 @Context
-
 @Controller("/BaseParams")
 //@TupleConstructor(includeFields = true, defaults = false)
-class BaseParamEndpoint {
-
-	private final DataManager dm
+class BaseParamEndpoint extends BaseDataEndpoint<Void, Response> {
 
 	BaseParamEndpoint(DataManager dm) {
-		this.dm = dm
+		super(dm)
 	}
 
 	@TupleConstructor(includeFields = true)
@@ -33,18 +31,13 @@ class BaseParamEndpoint {
 	@Operation(summary = "Get BaseParams")
 	@Get("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	HttpResponse<Response> baseParams() {
-		// Ready check endpoint
-		if (dm.ready) {
-			FullData fd = dm.getDataFuture().get()
+	HttpResponse<Response> baseParams(HttpRequest<?> request) {
+		return makeResponse(request, null)
+	}
 
-			List<BaseParam> items = fd.baseParams
-
-			return HttpResponse.ok(new Response(items))
-		}
-		else {
-			return HttpResponse.status(503, "Not Ready")
-		}
+	@Override
+	protected Response getContent(FullData data, Void _) {
+		return new Response(data.baseParams)
 	}
 
 }

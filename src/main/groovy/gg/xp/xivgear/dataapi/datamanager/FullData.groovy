@@ -2,13 +2,17 @@ package gg.xp.xivgear.dataapi.datamanager
 
 import gg.xp.xivapi.clienttypes.XivApiSchemaVersion
 import gg.xp.xivgear.dataapi.models.*
+import groovy.transform.DefaultsMode
 import groovy.transform.TupleConstructor
 
-@TupleConstructor(includeFields = true, defaults = false)
+import java.time.Instant
+
+@TupleConstructor(includeFields = true, defaultsMode = DefaultsMode.AUTO)
 class FullData implements Serializable {
 
+	// ALWAYS UPDATE THIS IF CHANGING THIS CLASS
 	@Serial
-	static final long serialVersionUID = 1
+	static final long serialVersionUID = 2
 
 	final List<String> versions
 	final List<BaseParam> baseParams
@@ -17,6 +21,7 @@ class FullData implements Serializable {
 	final List<ClassJob> jobs
 	final List<Materia> materia
 	final List<Food> food
+	final Instant timestamp = Instant.now()
 
 	XivApiSchemaVersion getSchemaVersion() {
 		return baseParams[0].schemaVersion
