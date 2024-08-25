@@ -12,7 +12,7 @@ class FullData implements Serializable {
 
 	// ALWAYS UPDATE THIS IF CHANGING THIS CLASS
 	@Serial
-	static final long serialVersionUID = 2
+	static final long serialVersionUID = 3
 
 	final List<String> versions
 	final List<BaseParam> baseParams

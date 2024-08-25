@@ -29,11 +29,11 @@ class ItemImpl implements Item {
 					int value = base.baseParamValueSpecial[i]
 					if (value != 0) {
 						out.compute(entry, { Integer k, Integer v ->
-							if (k == null) {
+							if (v == null) {
 								return value
 							}
 							else {
-								return k + value
+								return v + value
 							}
 						})
 					}
@@ -53,5 +53,13 @@ class ItemImpl implements Item {
 				.collect { it.key }
 	};
 
+	@Override
+	int getDamageMagHQ() {
+		return getDamageMag() + (getBaseParamMapHQ()[13] ?: 0)
+	}
 
+	@Override
+	int getDamagePhysHQ() {
+		return getDamagePhys() + (getBaseParamMapHQ()[12] ?: 0)
+	}
 }

@@ -9,4 +9,8 @@ public interface Item extends ItemBase {
 	Map<Integer, Integer> getBaseParamMapHQ();
 
 	List<String> getClassJobs();
+
+	int getDamageMagHQ();
+
+	int getDamagePhysHQ();
 }
