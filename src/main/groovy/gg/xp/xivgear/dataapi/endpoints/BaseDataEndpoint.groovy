@@ -56,6 +56,7 @@ abstract class BaseDataEndpoint<In, Out> {
 			// TODO: decide appropriate cache duration
 			return HttpResponse.ok(content).with {
 				header HttpHeaders.LAST_MODIFIED, dataModified.format(DateTimeFormatter.RFC_1123_DATE_TIME)
+				// TODO: add stale-if-error=3600*24 (or higher)
 				header HttpHeaders.CACHE_CONTROL, "max-age=300, public"
 			}
 		}

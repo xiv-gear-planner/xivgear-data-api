@@ -22,3 +22,20 @@ micronaut:
       swagger-ui:
         paths: classpath:META-INF/swagger/views/swagger-ui
         mapping: /swagger-ui/**
+
+  object-storage:
+    default-bucket: ${OBJECT_STORAGE_BUCKET_NAME:xivgear-data}
+    local:
+      default:
+        enabled: true
+        path: ${LOCAL_STORAGE_DIR:persistence}
+
+
+  jackson:
+    enabled: true
+  serde:
+    enabled: false
+  http:
+    services:
+      - id: json
+        json-mapper: jackson

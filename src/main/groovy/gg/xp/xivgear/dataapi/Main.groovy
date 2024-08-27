@@ -1,11 +1,14 @@
 package gg.xp.xivgear.dataapi
 
-
+import io.micronaut.context.annotation.Bean
+import io.micronaut.context.annotation.Context
+import io.micronaut.jackson.JacksonConfiguration
 import io.micronaut.runtime.Micronaut
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.info.Contact
 import io.swagger.v3.oas.annotations.info.Info
 import io.swagger.v3.oas.annotations.info.License
+import jakarta.inject.Singleton
 
 @OpenAPIDefinition(
 		info = @Info(
@@ -19,5 +22,12 @@ import io.swagger.v3.oas.annotations.info.License
 class Main {
 	static void main(String[] args) {
 		Micronaut.run(Main, args)
+	}
+
+	@Bean
+	@Singleton
+	@Context
+	JacksonConfiguration jacksonConfiguration() {
+		return new JacksonConfiguration();
 	}
 }
