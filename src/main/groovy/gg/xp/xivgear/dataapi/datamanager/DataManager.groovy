@@ -6,8 +6,11 @@ import gg.xp.xivapi.clienttypes.XivApiSchemaVersion
 import gg.xp.xivapi.filters.SearchFilter
 import gg.xp.xivapi.pagination.ListOptions
 import gg.xp.xivgear.dataapi.models.*
+import gg.xp.xivgear.dataapi.persistence.DataPersistence
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.micronaut.context.annotation.Context
+import io.micronaut.json.JsonConfiguration
 import jakarta.inject.Singleton
 
 import java.time.Duration
@@ -22,13 +25,16 @@ import static gg.xp.xivapi.filters.SearchFilters.*
 @Context
 @Singleton
 @Slf4j
+@CompileStatic
 class DataManager implements AutoCloseable {
 
 	private static final ExecutorService exs = Executors.newVirtualThreadPerTaskExecutor()
 
-	private Future<FullData> dataFuture
-	private final Thread updater
+	private CompletableFuture<FullData> dataFuture = new CompletableFuture<>()
+	private final Thread xivApiUpdater
+	private final Thread persistenceUpdater
 	private final XivApiClient client
+	private final DataPersistence pers
 	private volatile boolean stop
 
 	private static final int minIlvl = 290
@@ -40,32 +46,60 @@ class DataManager implements AutoCloseable {
 	private static final int maxIlvlFood = 999
 
 
-	DataManager() {
+	DataManager(DataPersistence pers) {
+		this.pers = pers
 		client = new XivApiClient()
-		dataFuture = exs.submit(this.&makeData as Callable<FullData>)
-		updater = Thread.startVirtualThread this.&updateLoop
+		xivApiUpdater = Thread.startVirtualThread this.&xivApiUpdateLoop
+		persistenceUpdater = Thread.startVirtualThread this.&persistenceUpdateLoop
 	}
 
-	Runnable updateLoop() {
+	private void offerNewData(FullData possibleNewData, boolean tryPersist) {
+		if (dataFuture.state() == Future.State.SUCCESS) {
+			FullData existing = dataFuture.get()
+			if (existing.timestamp.isBefore(possibleNewData.timestamp)) {
+				dataFuture = CompletableFuture.completedFuture possibleNewData
+				if (tryPersist) {
+					persistData possibleNewData
+				}
+				log.info "New data timestamp: ${possibleNewData.timestamp}"
+			}
+			else {
+				log.info "Data not newer"
+			}
+		}
+		else if (dataFuture.state() == Future.State.RUNNING) {
+			log.info "Initial data at ${possibleNewData.timestamp}"
+			dataFuture.complete possibleNewData
+			if (tryPersist) {
+				persistData possibleNewData
+			}
+		}
+		else {
+			log.error "Invalid state ${dataFuture.state()}"
+		}
+	}
+
+	void persistData(FullData newData) {
+		try {
+			log.info "Persistence: Pushing Data"
+			pers.data = newData
+		}
+		catch (Throwable t) {
+			log.error "Error persisting data", t
+		}
+	}
+
+	void xivApiUpdateLoop() {
 		while (!stop) {
 			try {
 				// TODO: do self-testing of the newly-acquired data to make sure that a schema mismatch didn't
 				// horribly break things.
-				Thread.sleep(Duration.ofSeconds(60).toMillis())
-				// If the initial load failed, save new data unconditionally
-
+				// If no existing data, retrieve new data unconditionally
+				boolean loadNew
 				Future.State state = dataFuture.state()
-				if (state == Future.State.FAILED || state == Future.State.CANCELLED) {
-					log.info("Initial load failed, updater trying again")
-					FullData data = makeData()
-					dataFuture = CompletableFuture.completedFuture(data)
-				}
-				else if (state == Future.State.RUNNING) {
-					log.info("Skipping update because initial load is still in progress")
-				}
-				else {
+				if (state == Future.State.SUCCESS) {
+					// If there is existing data to compare to, check if there's an update available
 					FullData oldData = dataFuture.get()
-					// First, check if there's actually an update
 					Set<String> oldVersions = oldData.versions.toSet()
 					Set<String> newVersions = client.gameVersions.toSet()
 					XivApiSchemaVersion oldSchema = oldData.schemaVersion
@@ -73,30 +107,59 @@ class DataManager implements AutoCloseable {
 					boolean versionSame = oldVersions == newVersions
 					boolean schemaSame = oldSchema.fullVersionString() == newSchema.fullVersionString()
 					if (versionSame && schemaSame) {
-						log.info("No update")
+						log.info "No update"
 					}
 					else {
 						if (versionSame) {
-							log.info("Update triggered (schema changed), going to reload data")
+							log.info "Update triggered (schema changed), going to reload data"
 						}
 						else if (schemaSame) {
-							log.info("Update triggered (version changed), going to reload data")
+							log.info "Update triggered (version changed), going to reload data"
 						}
 						else {
-							log.info("Update triggered (both changed), going to reload data")
+							log.info "Update triggered (both changed), going to reload data"
 						}
-						FullData data = makeData()
-						dataFuture = CompletableFuture.completedFuture(data)
-						log.info("Reloaded data")
+						offerNewData makeData(), true
+						log.info "Reloaded data"
 					}
+				}
+				else {
+					// If no existing data, then unconditionally update
+					log.info "No existing data"
+					offerNewData makeData(), true
 				}
 			}
 			catch (Throwable t) {
 				if (!stop) {
-					log.error("Error in update loop", t)
-					Thread.sleep(10_000)
+					log.error "Error in update loop", t
 				}
 			}
+			// Add some random waiting so that the workers will naturally stagger
+			Thread.sleep Duration.ofSeconds(60 + (Math.random() * 10) as int).toMillis()
+		}
+	}
+
+	void persistenceUpdateLoop() {
+		while (!stop) {
+			try {
+
+				log.info "Persistence: Getting Data"
+				FullData fd = pers.data
+				if (fd == null) {
+					log.info "Persistence: No Data"
+				}
+				else {
+					log.info "Persistence: Has Data"
+					offerNewData fd, false
+				}
+			}
+			catch (Throwable t) {
+				if (!stop) {
+					log.error "Error in pers update loop", t
+				}
+			}
+			// Add some random waiting so that the workers will naturally stagger
+			Thread.sleep Duration.ofSeconds(60 + (Math.random() * 10) as int).toMillis()
 		}
 	}
 
@@ -104,10 +167,14 @@ class DataManager implements AutoCloseable {
 		return client.getById(BaseParam, 1).schemaVersion
 	}
 
+	private FullData retrievePersistentData() {
+		return pers.data
+	}
+
 	private FullData makeData() {
 		try {
 
-			ListOptions<XivApiObject> opts = ListOptions.newBuilder().with {
+			ListOptions<XivApiObject> opts = ListOptions.<XivApiObject> newBuilder().with {
 				perPage 500
 				build()
 			}
@@ -171,18 +238,20 @@ class DataManager implements AutoCloseable {
 				FoodItemFood itemFood = foodBonuses[bonusId]
 				if (itemFood == null) {
 					log.error "Food item ${it} did not have corresponding ItemFood ID ${bonusId}"
-					return []
+					return [] as List<Food>
 				}
 				else {
-					return [new FoodImpl(it, itemFood)]
+					return [new FoodImpl(it, itemFood)] as List<Food>
 				}
-			}.<Food> toSorted { it.rowId }
+			}
+			food.<Food>sort { it.rowId }
 			log.info "Loaded ${food.size()} Foods"
 
-			return new FullData(versions, baseParams, itemBases, itemLevels, jobs, materia, food)
+			def data = new FullData(versions, baseParams, itemBases, itemLevels, jobs, materia, food)
+			return data
 		}
 		catch (Throwable t) {
-			log.error("Error getting data", t)
+			log.error "Error getting data", t
 			throw t
 		}
 	}
@@ -192,7 +261,7 @@ class DataManager implements AutoCloseable {
 			return false
 		}
 		try {
-			FullData result = dataFuture.get()
+			dataFuture.get()
 		}
 		catch (Throwable t) {
 			return false
@@ -206,7 +275,8 @@ class DataManager implements AutoCloseable {
 	@Override
 	void close() throws Exception {
 		stop = true
-		updater.interrupt()
+		xivApiUpdater.interrupt()
+		persistenceUpdater.interrupt()
 		client.close()
 	}
 }

@@ -3,11 +3,14 @@ package gg.xp.xivgear.dataapi.endpoints
 
 import gg.xp.xivgear.dataapi.datamanager.DataManager
 import gg.xp.xivgear.dataapi.datamanager.FullData
+import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import io.micronaut.core.annotation.NonNull
 import io.micronaut.http.HttpHeaders
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
+import io.micronaut.jackson.codec.JsonMediaTypeCodec
+import jakarta.inject.Inject
 
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -28,7 +31,9 @@ import java.time.temporal.ChronoUnit
  * @param <Out>   The response object type.
  */
 @TupleConstructor(includeFields = true, defaults = false)
+@CompileStatic
 abstract class BaseDataEndpoint<In, Out> {
+
 	protected final DataManager dm
 
 	/**
@@ -56,6 +61,7 @@ abstract class BaseDataEndpoint<In, Out> {
 			// TODO: decide appropriate cache duration
 			return HttpResponse.ok(content).with {
 				header HttpHeaders.LAST_MODIFIED, dataModified.format(DateTimeFormatter.RFC_1123_DATE_TIME)
+				// TODO: add stale-if-error=3600*24 (or higher)
 				header HttpHeaders.CACHE_CONTROL, "max-age=300, public"
 			}
 		}

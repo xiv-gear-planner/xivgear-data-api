@@ -24,7 +24,7 @@ tasks.named("dockerfile") {
 
 dependencies {
 	implementation 'org.apache.groovy:groovy:4.0.22'
-	implementation group: 'app.xivgear', name: 'xivapi-java', version: '0.1.1'
+	implementation group: 'app.xivgear', name: 'xivapi-java', version: '0.1.2'
 
 	testImplementation platform('org.junit:junit-bom:5.11.0')
 	testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -55,6 +55,20 @@ dependencies {
 	testImplementation("io.micronaut.test:micronaut-test-junit5")
 	testImplementation("org.junit.jupiter:junit-jupiter-api")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+
+	// object storage
+	// core
+	implementation("io.micronaut.objectstorage:micronaut-object-storage-core")
+	// Oracle Cloud
+	implementation("io.micronaut.objectstorage:micronaut-object-storage-oracle-cloud") {
+//		exclude group: "io.micronaut.serde", module: "micronaut-serde-api"
+	}
+	// S3 compatible (for Ceph RGW)
+	implementation("io.micronaut.objectstorage:micronaut-object-storage-aws")
+	// Local for testing
+	implementation("io.micronaut.objectstorage:micronaut-object-storage-local")
+
+
 }
 
 test {

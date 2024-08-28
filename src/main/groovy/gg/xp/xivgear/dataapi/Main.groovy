@@ -17,7 +17,9 @@ import io.swagger.v3.oas.annotations.info.License
 		)
 )
 class Main {
+
 	static void main(String[] args) {
 		Micronaut.run(Main, args)
 	}
+
 }

@@ -6,16 +6,18 @@ import gg.xp.xivgear.dataapi.models.Item
 import gg.xp.xivgear.dataapi.models.ItemImpl
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 @Slf4j
 @CompileStatic
+@MicronautTest
 class DatamanagerTest {
 
 	@Test
-	void testDm() {
-		DataManager dm = new DataManager()
+	void testDm(DataManager dm) {
+//		DataManager dm = new DataManager()
 		FullData fd = dm.getDataFuture().get()
 		log.info "items size: ${fd.itemBases.size()}"
 		log.info "baseparam size: ${fd.baseParams.size()}"
