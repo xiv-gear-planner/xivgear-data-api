@@ -10,6 +10,7 @@ import gg.xp.xivgear.dataapi.persistence.DataPersistence
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.micronaut.context.annotation.Context
+import io.micronaut.json.JsonConfiguration
 import jakarta.inject.Singleton
 
 import java.time.Duration
@@ -45,19 +46,21 @@ class DataManager implements AutoCloseable {
 	private static final int maxIlvlFood = 999
 
 
-	DataManager(DataPersistence pers) {
+	DataManager(DataPersistence pers, JsonConfiguration js) {
 		this.pers = pers
 		client = new XivApiClient()
 		xivApiUpdater = Thread.startVirtualThread this.&xivApiUpdateLoop
 		persistenceUpdater = Thread.startVirtualThread this.&persistenceUpdateLoop
 	}
 
-	private void offerNewData(FullData possibleNewData) {
+	private void offerNewData(FullData possibleNewData, boolean tryPersist) {
 		if (dataFuture.state() == Future.State.SUCCESS) {
 			FullData existing = dataFuture.get()
 			if (existing.timestamp.isBefore(possibleNewData.timestamp)) {
 				dataFuture = CompletableFuture.completedFuture possibleNewData
-				persistData possibleNewData
+				if (tryPersist) {
+					persistData possibleNewData
+				}
 				log.info "New data timestamp: ${possibleNewData.timestamp}"
 			}
 			else {
@@ -67,7 +70,9 @@ class DataManager implements AutoCloseable {
 		else if (dataFuture.state() == Future.State.RUNNING) {
 			log.info "Initial data at ${possibleNewData.timestamp}"
 			dataFuture.complete possibleNewData
-			persistData possibleNewData
+			if (tryPersist) {
+				persistData possibleNewData
+			}
 		}
 		else {
 			log.error "Invalid state ${dataFuture.state()}"
@@ -113,14 +118,14 @@ class DataManager implements AutoCloseable {
 						else {
 							log.info "Update triggered (both changed), going to reload data"
 						}
-						offerNewData makeData()
+						offerNewData makeData(), true
 						log.info "Reloaded data"
 					}
 				}
 				else {
 					// If no existing data, then unconditionally update
 					log.info "No existing data"
-					offerNewData makeData()
+					offerNewData makeData(), true
 				}
 			}
 			catch (Throwable t) {
@@ -144,7 +149,7 @@ class DataManager implements AutoCloseable {
 				}
 				else {
 					log.info "Persistence: Has Data"
-					offerNewData fd
+					offerNewData fd, false
 				}
 			}
 			catch (Throwable t) {

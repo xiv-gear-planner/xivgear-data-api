@@ -8,6 +8,9 @@ import io.micronaut.objectstorage.ObjectStorageOperations
 import io.micronaut.objectstorage.request.UploadRequest
 import jakarta.inject.Singleton
 
+import java.util.zip.GZIPInputStream
+import java.util.zip.GZIPOutputStream
+
 @Slf4j
 @Singleton
 class DataPersistence {
@@ -25,14 +28,17 @@ class DataPersistence {
 		if (raw.present) {
 			log.info "Stored data present"
 			ObjectStorageEntry<?> entry = raw.get()
-			ObjectInputStream stream = new ObjectInputStream(entry.inputStream)
-			def object = stream.readObject()
-			if (object instanceof FullData) {
-				log.info "Stored data successfully deserialized"
-				return object
-			}
-			else {
-				log.info "Deserialization failed! Wrong type: ${object}"
+			try (
+					GZIPInputStream gzipIn = new GZIPInputStream(entry.inputStream)
+					ObjectInputStream stream = new ObjectInputStream(gzipIn)) {
+				def object = stream.readObject()
+				if (object instanceof FullData) {
+					log.info "Stored data successfully deserialized"
+					return object
+				}
+				else {
+					log.info "Deserialization failed! Wrong type: ${object}"
+				}
 			}
 		}
 		else {
@@ -48,8 +54,11 @@ class DataPersistence {
 		else {
 			byte[] bytes
 			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()
-				 ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+				 GZIPOutputStream gzipOut = new GZIPOutputStream(baos)
+				 ObjectOutputStream oos = new ObjectOutputStream(gzipOut)) {
 				oos.writeObject(data)
+				oos.flush()
+				gzipOut.finish()
 				bytes = baos.toByteArray()
 			}
 			storage.upload UploadRequest.fromBytes(bytes, key)
