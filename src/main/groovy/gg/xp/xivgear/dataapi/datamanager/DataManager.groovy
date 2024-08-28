@@ -46,7 +46,7 @@ class DataManager implements AutoCloseable {
 	private static final int maxIlvlFood = 999
 
 
-	DataManager(DataPersistence pers, JsonConfiguration js) {
+	DataManager(DataPersistence pers) {
 		this.pers = pers
 		client = new XivApiClient()
 		xivApiUpdater = Thread.startVirtualThread this.&xivApiUpdateLoop
@@ -81,6 +81,7 @@ class DataManager implements AutoCloseable {
 
 	void persistData(FullData newData) {
 		try {
+			log.info "Persistence: Pushing Data"
 			pers.data = newData
 		}
 		catch (Throwable t) {

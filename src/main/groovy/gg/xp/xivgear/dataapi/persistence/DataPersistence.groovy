@@ -5,6 +5,10 @@ import groovy.util.logging.Slf4j
 import io.micronaut.core.annotation.Nullable
 import io.micronaut.objectstorage.ObjectStorageEntry
 import io.micronaut.objectstorage.ObjectStorageOperations
+import io.micronaut.objectstorage.configuration.ObjectStorageConfiguration
+import io.micronaut.objectstorage.local.LocalStorageConfiguration
+import io.micronaut.objectstorage.oraclecloud.OracleCloudStorageConfiguration
+import io.micronaut.objectstorage.oraclecloud.OracleCloudStorageOperations
 import io.micronaut.objectstorage.request.UploadRequest
 import jakarta.inject.Singleton
 
@@ -49,6 +53,7 @@ class DataPersistence {
 
 	void setData(FullData data) {
 		if (data == null) {
+			log.info "Deleting data"
 			storage.delete key
 		}
 		else {
@@ -61,6 +66,7 @@ class DataPersistence {
 				gzipOut.finish()
 				bytes = baos.toByteArray()
 			}
+			log.info "Uploading data"
 			storage.upload UploadRequest.fromBytes(bytes, key)
 		}
 	}
