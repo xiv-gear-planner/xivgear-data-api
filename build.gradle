@@ -16,6 +16,14 @@ micronaut {
 	version "4.4.2"
 	runtime "netty"
 	testRuntime "junit5"
+	dockerfile {
+		args "-XX:+UseG1GC"
+		args "-XX:MinHeapFreeRatio=15"
+		args "-XX:MaxHeapFreeRatio=30"
+		args "-XX:MaxRAMPercentage=70"
+		// TODO measure performance impact
+//		args "-XX:+UseStringDeduplication"
+	}
 }
 
 tasks.named("dockerfile") {
