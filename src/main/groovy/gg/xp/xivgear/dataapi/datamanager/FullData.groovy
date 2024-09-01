@@ -10,9 +10,11 @@ import java.time.Instant
 @TupleConstructor(includeFields = true, defaultsMode = DefaultsMode.AUTO)
 class FullData implements Serializable {
 
-	// ALWAYS UPDATE THIS IF CHANGING THIS CLASS
+	// ALWAYS UPDATE THIS IF CHANGING THIS CLASS OR ANYTHING ELSE IN IT
+	// The persistence later avoids conflicts between concurrently-running versions by
+	// using a different object storage key based on the serialVersionUID
 	@Serial
-	static final long serialVersionUID = 4
+	static final long serialVersionUID = 5
 
 	final List<String> versions
 	final List<BaseParam> baseParams
