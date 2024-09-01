@@ -1,13 +1,18 @@
 package gg.xp.xivgear.dataapi.datamanager
 
 import gg.xp.xivapi.clienttypes.XivApiSchemaVersion
+import gg.xp.xivgear.dataapi.gear.GearSource
 import gg.xp.xivgear.dataapi.models.*
+import groovy.transform.CompileStatic
 import groovy.transform.DefaultsMode
 import groovy.transform.TupleConstructor
 
 import java.time.Instant
 
-@TupleConstructor(includeFields = true, defaultsMode = DefaultsMode.AUTO)
+@CompileStatic
+@TupleConstructor(includeFields = true, defaultsMode = DefaultsMode.AUTO, post = {
+	this.finishItems()
+}, excludes = ['timestamp', 'items'])
 class FullData implements Serializable {
 
 	// ALWAYS UPDATE THIS IF CHANGING THIS CLASS OR ANYTHING ELSE IN IT
@@ -23,7 +28,16 @@ class FullData implements Serializable {
 	final List<ClassJob> jobs
 	final List<Materia> materia
 	final List<Food> food
+	final Set<Integer> itemsWithRecipes
 	final Instant timestamp = Instant.now()
+	transient List<Item> items
+
+	void finishItems() {
+		items = itemBases.collect { base ->
+			GearAcquisitionSource source = GearSource.getAcquisitionSource(this, base)
+			return new ItemImpl(base, source) as Item
+		}
+	}
 
 	XivApiSchemaVersion getSchemaVersion() {
 		return baseParams[0].schemaVersion

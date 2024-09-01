@@ -10,11 +10,13 @@ import gg.xp.xivgear.dataapi.persistence.DataPersistence
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.micronaut.context.annotation.Context
-import io.micronaut.json.JsonConfiguration
 import jakarta.inject.Singleton
 
 import java.time.Duration
-import java.util.concurrent.*
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
 import static gg.xp.xivapi.filters.SearchFilters.*
 
@@ -212,6 +214,38 @@ class DataManager implements AutoCloseable {
 			List<ItemBase> itemBases = client.getSearchIterator(ItemBase, itemFilter).toList().toSorted { it.rowId }
 			log.info "Loaded ${itemBases.size()} Items"
 
+			log.info "Loading Recipes"
+			SearchFilter recipeFilter = and(
+					gte("ItemResult.LevelItem", minIlvl),
+					lte("ItemResult.LevelItem", maxIlvl),
+					gt("ItemResult.EquipSlotCategory", 0),
+//					or(jobs
+//							.findAll { it.rowId > 0 }
+//							.collect {
+//								return eq("ItemResult.ClassJobCategory.${it.abbreviation}", 1)
+//							}
+//					)
+			)
+			List<Recipe> recipes = client.getSearchIterator(Recipe, recipeFilter).toList()
+			Set<Integer> itemsWithRecipes = recipes.collect { it.itemResult }.toSet()
+			log.info "Loaded ${recipes.size()} Recipes"
+
+//			log.info "Loading Shops"
+//			SearchFilter shopsFilter = and(
+//					gte("ItemResult.LevelItem", minIlvl),
+//					lte("ItemResult.LevelItem", maxIlvl),
+//					gt("ItemResult.EquipSlotCategory", 0),
+//					or(jobs
+//							.findAll { it.rowId > 0 }
+//							.collect {
+//								return eq("ItemResult.ClassJobCategory.${it.abbreviation}", 1)
+//							}
+//					)
+//			)
+//			List<SpecialShop> shops = client.getSearchIterator(SpecialShop, recipeFilter).toList()
+//			Set<Integer> itemsWithShops = shops.collectMany { it.item }.collectMany { it.item }.toSet()
+//			log.info "Loaded ${shops.size()} Shops"
+
 			log.info "Loading Materia"
 			SearchFilter materiaFilter = and(
 					gt(any("Item"), 0)
@@ -244,10 +278,10 @@ class DataManager implements AutoCloseable {
 					return [new FoodImpl(it, itemFood)] as List<Food>
 				}
 			}
-			food.<Food>sort { it.rowId }
+			food.<Food> sort { it.rowId }
 			log.info "Loaded ${food.size()} Foods"
 
-			def data = new FullData(versions, baseParams, itemBases, itemLevels, jobs, materia, food)
+			def data = new FullData(versions, baseParams, itemBases, itemLevels, jobs, materia, food, itemsWithRecipes)
 			return data
 		}
 		catch (Throwable t) {

@@ -13,6 +13,7 @@ public enum GearAcquisitionSource {
 	Ultimate,
 	Artifact,
 	AllianceRaid,
+	Criterion,
 	Other,
 	Custom,
 	Unknown
