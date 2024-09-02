@@ -24,7 +24,7 @@ class GearSource {
 					}
 					else {
 //						return Unknown
-						boolean isCraftable = fd.itemsWithRecipes.contains(rowId) // TODO
+						boolean isCraftable = fd.itemsWithRecipes.contains(rowId)
 						if (isCraftable) {
 							return Crafted
 						}
@@ -42,7 +42,7 @@ class GearSource {
 					if (GearLevels.isArtifactLevel(ilvl)) {
 						if (isWeapon) {
 							// Ambiguous due to start-of-expac extreme trial weapons having the same level
-							// TODO: do these AF weapons have a shop that we can use?
+							// TODO: these AF weapons probably have a shop that we can use.
 							return Unknown
 						}
 						else {
@@ -64,7 +64,6 @@ class GearSource {
 					}
 					// Savage/Ultimate weapon
 					else if (GearLevels.isSavageRaidWeaponLevel(ilvl) && isWeapon) {
-						// TODO: Aloalo has some weapons, doesn't it?
 						if (name.contains("Ultimate")) {
 							return Ultimate
 						}
@@ -77,15 +76,15 @@ class GearSource {
 					}
 					// Unaug tome, alliance raid
 					else if (GearLevels.isUnAugmentedTomeLevel(ilvl)) {
-						// TODO
+						// TODO: shops
 						return Unknown
-						boolean hasShop = true
-						if (hasShop) {
-							return Tome
-						}
-						else {
-							return AllianceRaid
-						}
+//						boolean hasShop = true
+//						if (hasShop) {
+//							return Tome
+//						}
+//						else {
+//							return AllianceRaid
+//						}
 					}
 					// Normal raids, start-of-expac extreme accs
 					else if (GearLevels.isNormalRaidLevel(ilvl)) {
@@ -93,17 +92,17 @@ class GearSource {
 							return ExtremeTrial
 						}
 						else {
-							// TODO
+							// TODO: shops
 							return Unknown
-							boolean hasShop = true
-							if (hasShop) {
-								// TODO: this logic is untested
-								// old logic just put these as 'other'
-								return NormalRaid
-							}
-							else {
-								return ExtremeTrial
-							}
+//							boolean hasShop = true
+//							if (hasShop) {
+//								// TODO: this logic is untested
+//								// old logic just put these as 'other'
+//								return NormalRaid
+//							}
+//							else {
+//								return ExtremeTrial
+//							}
 						}
 					}
 					else if (GearLevels.isExTrialLevel(ilvl) && isWeapon) {
