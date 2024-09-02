@@ -230,21 +230,28 @@ class DataManager implements AutoCloseable {
 			Set<Integer> itemsWithRecipes = recipes.collect { it.itemResult }.toSet()
 			log.info "Loaded ${recipes.size()} Recipes"
 
+			// There is currently no good way to do shops. SpecialShop items have a 60-item "Items" array which results
+			// in a massive response. It is too slow and bloated to consume raw. Trying to filter also results in
+			// unacceptable performance because xivapi has to do way too many joins.
 //			log.info "Loading Shops"
-//			SearchFilter shopsFilter = and(
-//					gte("ItemResult.LevelItem", minIlvl),
-//					lte("ItemResult.LevelItem", maxIlvl),
-//					gt("ItemResult.EquipSlotCategory", 0),
-//					or(jobs
-//							.findAll { it.rowId > 0 }
-//							.collect {
-//								return eq("ItemResult.ClassJobCategory.${it.abbreviation}", 1)
-//							}
-//					)
-//			)
-//			List<SpecialShop> shops = client.getSearchIterator(SpecialShop, recipeFilter).toList()
-//			Set<Integer> itemsWithShops = shops.collectMany { it.item }.collectMany { it.item }.toSet()
-//			log.info "Loaded ${shops.size()} Shops"
+//			Set<Integer> itemsWithShops = new HashSet<>()
+			// Searching is currently too slow because it has to do a double-join
+//			itemBases.collate(50).each { subList ->
+//				SearchFilter shopsFilter = or(
+//						subList.collect {
+//							eq "Item[].Item[]", it.rowId
+//						},
+//				)
+//				client.getSearchIterator(SpecialShop, shopsFilter).each {
+//					itemsWithShops.addAll it.item.collectMany { it.item }
+//				}
+//			}
+//			client.getListIterator(SpecialShop).each {
+//				it.item.each {
+//					itemsWithShops.addAll it.item
+//				}
+//			}
+//			log.info "Loaded ${itemsWithShops} Shop->Item Mappings"
 
 			log.info "Loading Materia"
 			SearchFilter materiaFilter = and(
