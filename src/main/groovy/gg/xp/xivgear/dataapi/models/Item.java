@@ -13,4 +13,6 @@ public interface Item extends ItemBase {
 	int getDamageMagHQ();
 
 	int getDamagePhysHQ();
+
+	GearAcquisitionSource getAcquisitionSource();
 }

@@ -10,11 +10,13 @@ import gg.xp.xivgear.dataapi.persistence.DataPersistence
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.micronaut.context.annotation.Context
-import io.micronaut.json.JsonConfiguration
 import jakarta.inject.Singleton
 
 import java.time.Duration
-import java.util.concurrent.*
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
 import static gg.xp.xivapi.filters.SearchFilters.*
 
@@ -212,6 +214,45 @@ class DataManager implements AutoCloseable {
 			List<ItemBase> itemBases = client.getSearchIterator(ItemBase, itemFilter).toList().toSorted { it.rowId }
 			log.info "Loaded ${itemBases.size()} Items"
 
+			log.info "Loading Recipes"
+			SearchFilter recipeFilter = and(
+					gte("ItemResult.LevelItem", minIlvl),
+					lte("ItemResult.LevelItem", maxIlvl),
+					gt("ItemResult.EquipSlotCategory", 0),
+//					or(jobs
+//							.findAll { it.rowId > 0 }
+//							.collect {
+//								return eq("ItemResult.ClassJobCategory.${it.abbreviation}", 1)
+//							}
+//					)
+			)
+			List<Recipe> recipes = client.getSearchIterator(Recipe, recipeFilter).toList()
+			Set<Integer> itemsWithRecipes = recipes.collect { it.itemResult }.toSet()
+			log.info "Loaded ${recipes.size()} Recipes"
+
+			// There is currently no good way to do shops. SpecialShop items have a 60-item "Items" array which results
+			// in a massive response. It is too slow and bloated to consume raw. Trying to filter also results in
+			// unacceptable performance because xivapi has to do way too many joins.
+//			log.info "Loading Shops"
+//			Set<Integer> itemsWithShops = new HashSet<>()
+			// Searching is currently too slow because it has to do a double-join
+//			itemBases.collate(50).each { subList ->
+//				SearchFilter shopsFilter = or(
+//						subList.collect {
+//							eq "Item[].Item[]", it.rowId
+//						},
+//				)
+//				client.getSearchIterator(SpecialShop, shopsFilter).each {
+//					itemsWithShops.addAll it.item.collectMany { it.item }
+//				}
+//			}
+//			client.getListIterator(SpecialShop).each {
+//				it.item.each {
+//					itemsWithShops.addAll it.item
+//				}
+//			}
+//			log.info "Loaded ${itemsWithShops} Shop->Item Mappings"
+
 			log.info "Loading Materia"
 			SearchFilter materiaFilter = and(
 					gt(any("Item"), 0)
@@ -244,10 +285,10 @@ class DataManager implements AutoCloseable {
 					return [new FoodImpl(it, itemFood)] as List<Food>
 				}
 			}
-			food.<Food>sort { it.rowId }
+			food.<Food> sort { it.rowId }
 			log.info "Loaded ${food.size()} Foods"
 
-			def data = new FullData(versions, baseParams, itemBases, itemLevels, jobs, materia, food)
+			def data = new FullData(versions, baseParams, itemBases, itemLevels, jobs, materia, food, itemsWithRecipes)
 			return data
 		}
 		catch (Throwable t) {

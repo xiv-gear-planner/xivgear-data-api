@@ -1,6 +1,5 @@
 package gg.xp.xivgear.dataapi.endpoints
 
-
 import gg.xp.xivgear.dataapi.datamanager.DataManager
 import gg.xp.xivgear.dataapi.datamanager.FullData
 import groovy.transform.CompileStatic
@@ -9,8 +8,6 @@ import io.micronaut.core.annotation.NonNull
 import io.micronaut.http.HttpHeaders
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
-import io.micronaut.jackson.codec.JsonMediaTypeCodec
-import jakarta.inject.Inject
 
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -27,8 +24,8 @@ import java.time.temporal.ChronoUnit
  *     <li>Returning 304 Not Modified when the client already has the newest data.</li>
  * </ul>
  *
- * @param <In>    A type that encompasses whatever necessary parameters.
- * @param <Out>   The response object type.
+ * @param <In>     A type that encompasses whatever necessary parameters.
+ * @param <Out>    The response object type.
  */
 @TupleConstructor(includeFields = true, defaults = false)
 @CompileStatic

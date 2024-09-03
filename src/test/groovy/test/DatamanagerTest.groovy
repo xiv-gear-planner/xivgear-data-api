@@ -2,6 +2,7 @@ package test
 
 import gg.xp.xivgear.dataapi.datamanager.DataManager
 import gg.xp.xivgear.dataapi.datamanager.FullData
+import gg.xp.xivgear.dataapi.models.GearAcquisitionSource
 import gg.xp.xivgear.dataapi.models.Item
 import gg.xp.xivgear.dataapi.models.ItemImpl
 import groovy.transform.CompileStatic
@@ -22,7 +23,7 @@ class DatamanagerTest {
 		log.info "items size: ${fd.itemBases.size()}"
 		log.info "baseparam size: ${fd.baseParams.size()}"
 
-		Item archeoBroadSword = new ItemImpl(fd.itemBases.find { it.rowId == 42870 })
+		Item archeoBroadSword = new ItemImpl(fd.itemBases.find { it.rowId == 42870 }, GearAcquisitionSource.Unknown)
 		int str = 1
 		int vit = 3
 		int det = 44

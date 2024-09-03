@@ -8,6 +8,8 @@ class ItemImpl implements Item {
 	@Delegate
 	private final ItemBase base
 
+	private final GearAcquisitionSource acquisitionSource
+
 	Map<Integer, Integer> getBaseParamMap() {
 		Map<Integer, Integer> out = [:]
 		base.baseParam.eachWithIndex { int entry, int i ->
@@ -18,7 +20,7 @@ class ItemImpl implements Item {
 				}
 			}
 		}
-		return out;
+		return out
 	};
 
 	Map<Integer, Integer> getBaseParamMapHQ() {
@@ -61,5 +63,10 @@ class ItemImpl implements Item {
 	@Override
 	int getDamagePhysHQ() {
 		return getDamagePhys() + (getBaseParamMapHQ()[12] ?: 0)
+	}
+
+	@Override
+	GearAcquisitionSource getAcquisitionSource() {
+		return acquisitionSource
 	}
 }
