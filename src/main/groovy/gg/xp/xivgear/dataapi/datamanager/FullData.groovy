@@ -39,6 +39,11 @@ class FullData implements Serializable {
 		}
 	}
 
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject()
+		finishItems()
+	}
+
 	XivApiSchemaVersion getSchemaVersion() {
 		return baseParams[0].schemaVersion
 	}
