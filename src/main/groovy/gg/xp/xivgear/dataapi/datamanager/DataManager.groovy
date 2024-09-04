@@ -137,7 +137,7 @@ class DataManager implements AutoCloseable {
 				}
 			}
 			// Add some random waiting so that the workers will naturally stagger
-			Thread.sleep Duration.ofSeconds(60 + (Math.random() * 10) as int).toMillis()
+			Thread.sleep Duration.ofSeconds(120 + (Math.random() * 10) as int).toMillis()
 		}
 	}
 
@@ -161,7 +161,7 @@ class DataManager implements AutoCloseable {
 				}
 			}
 			// Add some random waiting so that the workers will naturally stagger
-			Thread.sleep Duration.ofSeconds(60 + (Math.random() * 10) as int).toMillis()
+			Thread.sleep Duration.ofSeconds(120 + (Math.random() * 10) as int).toMillis()
 		}
 	}
 

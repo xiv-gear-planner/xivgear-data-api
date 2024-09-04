@@ -59,7 +59,7 @@ abstract class BaseDataEndpoint<In, Out> {
 			return HttpResponse.ok(content).with {
 				header HttpHeaders.LAST_MODIFIED, dataModified.format(DateTimeFormatter.RFC_1123_DATE_TIME)
 				// TODO: add stale-if-error=3600*24 (or higher)
-				header HttpHeaders.CACHE_CONTROL, "max-age=300, public"
+				header HttpHeaders.CACHE_CONTROL, "max-age=1200, public"
 			}
 		}
 		else {
