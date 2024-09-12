@@ -59,5 +59,7 @@ public interface ItemBase extends XivApiObject {
 
 	int getRarity();
 
+	@XivApiField("LevelEquip")
+	int getEquipLevel();
 
 }
