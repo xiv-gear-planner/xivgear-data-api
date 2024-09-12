@@ -307,7 +307,11 @@ class DataManager implements AutoCloseable {
 			return false
 		}
 		try {
-			dataFuture.get()
+			FullData data = dataFuture.get()
+			if (data.items.isEmpty()) {
+				return false
+			}
+			return true
 		}
 		catch (Throwable t) {
 			return false
