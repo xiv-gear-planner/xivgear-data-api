@@ -212,6 +212,7 @@ class DataManager implements AutoCloseable {
 					)
 			)
 			List<ItemBase> itemBases = client.getSearchIterator(ItemBase, itemFilter).toList().toSorted { it.rowId }
+			Set<Integer> itemIds = itemBases.collect { it.rowId }.toSet()
 			log.info "Loaded ${itemBases.size()} Items"
 
 			log.info "Loading Recipes"
@@ -227,8 +228,12 @@ class DataManager implements AutoCloseable {
 //					)
 			)
 			List<Recipe> recipes = client.getSearchIterator(Recipe, recipeFilter).toList()
-			Set<Integer> itemsWithRecipes = recipes.collect { it.itemResult }.toSet()
-			log.info "Loaded ${recipes.size()} Recipes"
+			// Only retain items that were in our original result set
+			Set<Integer> itemsWithRecipes = recipes
+					.collect { it.itemResult }
+					.findAll { it in itemIds }
+					.toSet()
+			log.info "Loaded ${itemsWithRecipes.size()} Recipes"
 
 			// There is currently no good way to do shops. SpecialShop items have a 60-item "Items" array which results
 			// in a massive response. It is too slow and bloated to consume raw. Trying to filter also results in

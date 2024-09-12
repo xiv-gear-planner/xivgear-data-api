@@ -18,7 +18,7 @@
           <option value="run" />
         </list>
       </option>
-      <option name="vmOptions" value="-Dmicronaut.openapi.json.format=false" />
+      <option name="vmOptions" value="-XX:+UseG1GC -XX:MinHeapFreeRatio=15 -XX:MaxHeapFreeRatio=30 -XX:MaxRAMPercentage=70" />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
