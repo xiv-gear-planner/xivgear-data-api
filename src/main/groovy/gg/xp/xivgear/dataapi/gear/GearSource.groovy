@@ -3,12 +3,14 @@ package gg.xp.xivgear.dataapi.gear
 import gg.xp.xivgear.dataapi.datamanager.FullData
 import gg.xp.xivgear.dataapi.models.GearAcquisitionSource
 import gg.xp.xivgear.dataapi.models.ItemBase
+import groovy.transform.CompileStatic
 
 import static gg.xp.xivgear.dataapi.models.GearAcquisitionSource.*
 
+@CompileStatic
 class GearSource {
 
-	static GearAcquisitionSource getAcquisitionSource(FullData fd, ItemBase base) {
+	static GearAcquisitionSource getAcquisitionSource(FullData fd, ItemBase base, Set<String> allItemNames) {
 		return base.with {
 			switch (rarity) {
 				case 1: {
@@ -23,7 +25,6 @@ class GearSource {
 						return AugCrafted
 					}
 					else {
-//						return Unknown
 						boolean isCraftable = fd.itemsWithRecipes.contains(rowId)
 						if (isCraftable) {
 							return Crafted
@@ -76,15 +77,17 @@ class GearSource {
 					}
 					// Unaug tome, alliance raid
 					else if (GearLevels.isUnAugmentedTomeLevel(ilvl)) {
-						// TODO: shops
-						return Unknown
-//						boolean hasShop = true
-//						if (hasShop) {
-//							return Tome
-//						}
-//						else {
-//							return AllianceRaid
-//						}
+						// Guess if it is tome or alliance by checking for the presence of an item
+						// with the same name, prefixed with "Augmented".
+						// The ideal way to do this would be to see if there is a shop that sells this
+						// item, but SpecialShop is an atrocity and new xivapi can't deal with it very
+						// well yet.
+						if (allItemNames.contains("Augmented ${name}".toString())) {
+							return Tome
+						}
+						else {
+							return AllianceRaid
+						}
 					}
 					// Normal raids, start-of-expac extreme accs
 					else if (GearLevels.isNormalRaidLevel(ilvl)) {
@@ -92,7 +95,7 @@ class GearSource {
 							return ExtremeTrial
 						}
 						else {
-							// TODO: shops
+							// TODO: shops needed for this
 							return Unknown
 //							boolean hasShop = true
 //							if (hasShop) {

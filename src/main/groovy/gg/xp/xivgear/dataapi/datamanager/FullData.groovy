@@ -33,8 +33,13 @@ class FullData implements Serializable {
 	transient List<Item> items
 
 	void finishItems() {
+		// Used to determine acq source for un-augmented tome items
+		Set<String> itemNames = new HashSet<>()
+		itemBases.each {
+			itemNames.add(it.name)
+		}
 		items = itemBases.collect { base ->
-			GearAcquisitionSource source = GearSource.getAcquisitionSource(this, base)
+			GearAcquisitionSource source = GearSource.getAcquisitionSource(this, base, itemNames)
 			return new ItemImpl(base, source) as Item
 		}
 	}
