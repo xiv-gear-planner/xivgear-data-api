@@ -46,6 +46,10 @@ class DatamanagerTest {
 
 		Assertions.assertEquals(141, archeoBroadSword.damagePhysHQ)
 		Assertions.assertEquals(71, archeoBroadSword.damageMagHQ)
+
+		Item quetzalliCane = fd.items.find { it.rowId == 42952 }
+
+		Assertions.assertEquals(GearAcquisitionSource.Tome, quetzalliCane.acquisitionSource)
 	}
 
 }
