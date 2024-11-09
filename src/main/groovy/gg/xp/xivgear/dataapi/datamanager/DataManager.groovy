@@ -3,6 +3,7 @@ package gg.xp.xivgear.dataapi.datamanager
 import gg.xp.xivapi.XivApiClient
 import gg.xp.xivapi.clienttypes.XivApiObject
 import gg.xp.xivapi.clienttypes.XivApiSchemaVersion
+import gg.xp.xivapi.clienttypes.XivApiSettings
 import gg.xp.xivapi.filters.SearchFilter
 import gg.xp.xivapi.pagination.ListOptions
 import gg.xp.xivgear.dataapi.models.*
