@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import gg.xp.xivapi.annotations.XivApiField;
 import gg.xp.xivapi.annotations.XivApiRaw;
 import gg.xp.xivapi.annotations.XivApiSheet;
+import gg.xp.xivapi.clienttypes.XivApiLangValue;
 import gg.xp.xivapi.clienttypes.XivApiObject;
 
 import java.util.List;
@@ -16,6 +17,9 @@ public interface ItemBase extends XivApiObject {
 	int getIlvl();
 
 	String getName();
+
+	@XivApiField("Name")
+	XivApiLangValue<String> getNameTranslations();
 
 	Icon getIcon();
 
