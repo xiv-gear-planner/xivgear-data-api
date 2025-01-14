@@ -9,6 +9,7 @@ import io.micronaut.objectstorage.ObjectStorageOperations
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 
 @Slf4j
 @CompileStatic
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test
 class DatamanagerTest {
 
 	@Test
+	@Timeout(120)
 	void testDm(DataManager dm, DataPersistence pers, ObjectStorageOperations<?, ?, ?> storage) {
 		log.info "Checking persistence"
 		Assertions.assertNull pers.data
@@ -107,6 +109,10 @@ class DatamanagerTest {
 		}
 
 		log.info "Checking persistence"
+		while (pers.data == null) {
+			log.info "Waiting..."
+			Thread.sleep 500
+		}
 		Assertions.assertNotNull pers.data
 		log.info "Checking object storage"
 		Assertions.assertNotNull storage.retrieve(storageKey).orElse(null)
