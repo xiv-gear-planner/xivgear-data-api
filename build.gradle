@@ -32,7 +32,7 @@ tasks.named("dockerfile") {
 
 dependencies {
 	implementation 'org.apache.groovy:groovy:4.0.22'
-	implementation group: 'app.xivgear', name: 'xivapi-java', version: '0.1.3'
+	implementation group: 'app.xivgear', name: 'xivapi-java', version: '0.1.5'
 
 	testImplementation platform('org.junit:junit-bom:5.11.0')
 	testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -81,6 +81,7 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+	systemProperties['xivapi.baseUri'] = System.getProperty("xivapi.baseUri") ?: 'https://bm.xivgear.app/api/1'
 }
 
 application {

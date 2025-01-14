@@ -68,6 +68,7 @@ class DataPersistence {
 			}
 			log.info "Uploading data"
 			storage.upload UploadRequest.fromBytes(bytes, key)
+			log.info "Uploaded data"
 		}
 	}
 

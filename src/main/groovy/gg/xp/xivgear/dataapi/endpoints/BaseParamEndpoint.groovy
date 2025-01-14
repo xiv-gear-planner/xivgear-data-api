@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.Operation
 
 @Context
 @Controller("/BaseParams")
-//@TupleConstructor(includeFields = true, defaults = false)
 class BaseParamEndpoint extends BaseDataEndpoint<Void, Response> {
 
 	BaseParamEndpoint(DataManager dm) {

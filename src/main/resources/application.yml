@@ -39,3 +39,6 @@ micronaut:
     services:
       - id: json
         json-mapper: jackson
+
+xivapi:
+  baseUri: https://bm.xivgear.app/api/1

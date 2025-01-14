@@ -17,7 +17,6 @@ import io.swagger.v3.oas.annotations.Operation
 @Context
 @Controller("/Items")
 @CompileStatic
-//@TupleConstructor(includeFields = true, defaults = false)
 class ItemsEndpoint extends BaseDataEndpoint<String, Response> {
 
 	ItemsEndpoint(DataManager dm) {
@@ -26,6 +25,7 @@ class ItemsEndpoint extends BaseDataEndpoint<String, Response> {
 
 	@TupleConstructor(includeFields = true)
 	private static class Response {
+		@SuppressWarnings('unused')
 		final List<Item> items
 	}
 
@@ -39,14 +39,6 @@ class ItemsEndpoint extends BaseDataEndpoint<String, Response> {
 
 	@Override
 	protected Response getContent(FullData fd, String job) {
-//		List<Item> items = fd.itemBases
-//				.findAll { it.classJobCategory.jobs[job] }
-//				.collect { base ->
-//					// TODO: is this heavy to recompute every time?
-//					// Can BaseDataEndpoint be augmented to cache this internally?
-//					GearAcquisitionSource source = GearSource.getAcquisitionSource(fd, base)
-//					return new ItemImpl(base, source) as Item
-//				}
 		List<Item> items = fd.items.findAll { it.classJobCategory.jobs[job] }
 		return new Response(items)
 	}

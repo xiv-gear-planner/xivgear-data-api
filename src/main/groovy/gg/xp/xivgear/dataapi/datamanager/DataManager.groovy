@@ -11,12 +11,12 @@ import gg.xp.xivgear.dataapi.persistence.DataPersistence
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.micronaut.context.annotation.Context
+import io.micronaut.context.annotation.Property
+import io.micronaut.context.annotation.Value
 import jakarta.inject.Singleton
 
 import java.time.Duration
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
 import static gg.xp.xivapi.filters.SearchFilters.*
@@ -31,8 +31,6 @@ import static gg.xp.xivapi.filters.SearchFilters.*
 @CompileStatic
 class DataManager implements AutoCloseable {
 
-	private static final ExecutorService exs = Executors.newVirtualThreadPerTaskExecutor()
-
 	private CompletableFuture<FullData> dataFuture = new CompletableFuture<>()
 	private final Thread xivApiUpdater
 	private final Thread persistenceUpdater
@@ -41,17 +39,18 @@ class DataManager implements AutoCloseable {
 	private volatile boolean stop
 
 	private static final int minIlvl = 290
-//	private static final int minIlvl = 570
-//	private static final int maxIlvl = 310
-//	private static final int minIlvl = 680
 	private static final int maxIlvl = 999
 	private static final int minIlvlFood = 430
 	private static final int maxIlvlFood = 999
 
-
-	DataManager(DataPersistence pers) {
+	DataManager(DataPersistence pers, @Value('${xivapi.baseUri}') Optional<URI> xivApiUri) {
 		this.pers = pers
-		client = new XivApiClient()
+		client = new XivApiClient(XivApiSettings.newBuilder().with {
+			xivApiUri.ifPresent {
+				baseUri = it
+			}
+			build()
+		})
 		xivApiUpdater = Thread.startVirtualThread this.&xivApiUpdateLoop
 		persistenceUpdater = Thread.startVirtualThread this.&persistenceUpdateLoop
 	}
@@ -188,7 +187,8 @@ class DataManager implements AutoCloseable {
 			log.info "Loaded ${versions.size()} versions"
 
 			log.info "Loading BaseParams"
-			List<BaseParam> baseParams = client.getListIterator(BaseParam).toList().toSorted { it.rowId }
+			// TODO revert this
+			List<BaseParam> baseParams = client.getListIterator(BaseParam).toBufferedStream(10).toList().toSorted { it.rowId }
 			log.info "Loaded ${baseParams.size()} BaseParams"
 
 			log.info "Loading ItemLevel"
