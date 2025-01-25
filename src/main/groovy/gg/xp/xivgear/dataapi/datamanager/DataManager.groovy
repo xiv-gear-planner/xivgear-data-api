@@ -56,6 +56,7 @@ class DataManager implements AutoCloseable {
 	}
 
 	private void offerNewData(FullData possibleNewData, boolean tryPersist) {
+		// This branch means we already have data
 		if (dataFuture.state() == Future.State.SUCCESS) {
 			FullData existing = dataFuture.get()
 			if (existing.timestamp.isBefore(possibleNewData.timestamp)) {
@@ -69,6 +70,7 @@ class DataManager implements AutoCloseable {
 				log.info "Data not newer"
 			}
 		}
+		// We do not have data yet
 		else if (dataFuture.state() == Future.State.RUNNING) {
 			log.info "Initial data at ${possibleNewData.timestamp}"
 			dataFuture.complete possibleNewData
