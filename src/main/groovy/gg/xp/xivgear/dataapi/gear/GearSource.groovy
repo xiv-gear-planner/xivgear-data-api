@@ -24,6 +24,10 @@ class GearSource {
 					if (name.contains("Augmented")) {
 						return AugCrafted
 					}
+					else if (name.contains("Ornate")) {
+						// TODO: is this really "Crated"? Or should there be a separate category for "Ornate"?
+						return Crafted
+					}
 					else {
 						boolean isCraftable = fd.itemsWithRecipes.contains(rowId)
 						if (isCraftable) {

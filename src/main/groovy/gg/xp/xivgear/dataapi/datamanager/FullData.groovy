@@ -9,6 +9,9 @@ import groovy.transform.TupleConstructor
 
 import java.time.Instant
 
+/**
+ * FullData represents a full "data pack" from xivapi
+ */
 @CompileStatic
 @TupleConstructor(includeFields = true, defaultsMode = DefaultsMode.AUTO, post = {
 	this.finishItems()
@@ -19,7 +22,7 @@ class FullData implements Serializable {
 	// The persistence later avoids conflicts between concurrently-running versions by
 	// using a different object storage key based on the serialVersionUID
 	@Serial
-	static final long serialVersionUID = 9
+	static final long serialVersionUID = 10
 
 	final List<String> versions
 	final List<BaseParam> baseParams
@@ -30,7 +33,7 @@ class FullData implements Serializable {
 	final List<Food> food
 	final Set<Integer> itemsWithRecipes
 	final Instant timestamp = Instant.now()
-	transient List<Item> items
+	private transient List<Item> items
 
 	void finishItems() {
 		// Used to determine acq source for un-augmented tome items
@@ -53,11 +56,18 @@ class FullData implements Serializable {
 		return baseParams[0].schemaVersion
 	}
 
+	List<Item> getItems() {
+		return items
+	}
+
 	@Override
 	Object getProperty(String propertyName) {
 		Object out = super.getProperty(propertyName)
 		if (out instanceof List) {
 			return Collections.unmodifiableList(out)
+		}
+		else if (out instanceof Set) {
+			return Collections.unmodifiableSet(out)
 		}
 		return out
 	}

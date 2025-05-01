@@ -24,8 +24,8 @@ import java.time.temporal.ChronoUnit
  *     <li>Returning 304 Not Modified when the client already has the newest data.</li>
  * </ul>
  *
- * @param <In>     A type that encompasses whatever necessary parameters.
- * @param <Out>    The response object type.
+ * @param <In>      A type that encompasses whatever necessary parameters.
+ * @param <Out>     The response object type.
  */
 @TupleConstructor(includeFields = true, defaults = false)
 @CompileStatic

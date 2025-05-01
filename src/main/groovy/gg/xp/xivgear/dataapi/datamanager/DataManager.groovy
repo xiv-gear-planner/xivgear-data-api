@@ -48,12 +48,21 @@ class DataManager implements AutoCloseable {
 			xivApiUri.ifPresent {
 				baseUri = it
 			}
+			userAgent = "xivgear-data-api/1.0 (xivapi-java)"
 			build()
 		})
 		xivApiUpdater = Thread.startVirtualThread this.&xivApiUpdateLoop
 		persistenceUpdater = Thread.startVirtualThread this.&persistenceUpdateLoop
 	}
 
+	/**
+	 * offerNewData is called when we have a potentially better data pack from any source (either xivapi
+	 * directly or persistent storage).
+	 *
+	 * @param possibleNewData The new data
+	 * @param tryPersist If true, will persist the data back into persistent storage. Should be false if the data
+	 * originally came from object storage.
+	 */
 	private void offerNewData(FullData possibleNewData, boolean tryPersist) {
 		// This branch means we already have data
 		if (dataFuture.state() == Future.State.SUCCESS) {
@@ -82,7 +91,12 @@ class DataManager implements AutoCloseable {
 		}
 	}
 
-	void persistData(FullData newData) {
+	/**
+	 * Store a new data pack into persistent storage.
+	 *
+	 * @param newData The data to store
+	 */
+	private void persistData(FullData newData) {
 		try {
 			log.info "Persistence: Pushing Data"
 			pers.data = newData
@@ -92,16 +106,28 @@ class DataManager implements AutoCloseable {
 		}
 	}
 
-	void xivApiUpdateLoop() {
+	/**
+	 * This updater loop runs in its own thread and is responsible for periodically querying Xivapi.
+	 * <p>
+	 * It will unconditionally pull the full data pack if we do not have any persisted data yet. Otherwise, it will
+	 * "pre-check" by querying the versions and schema, and checking if it is different from the persisted data.
+	 * It will only pull the full data pack if there is a mismatch.
+	 * <p>
+	 * Note that this introduces a useful quirk where, because the persistenceUpdateLoop most likely will not have
+	 * pulled data prior to the first iteration of this loop, this will pull fresh data when the process starts,
+	 * even if there is existing data.
+	 */
+	private void xivApiUpdateLoop() {
 		while (!stop) {
 			try {
 				// TODO: do self-testing of the newly-acquired data to make sure that a schema mismatch didn't
 				// horribly break things.
-				// If no existing data, retrieve new data unconditionally
 				boolean loadNew
 				Future.State state = dataFuture.state()
 				if (state == Future.State.SUCCESS) {
-					// If there is existing data to compare to, check if there's an update available
+					// If there is existing data to compare to, check if there's an update available.
+					// We consider data to be "different" if either the set of game versions, or the schema
+					// version does not match.
 					FullData oldData = dataFuture.get()
 					Set<String> oldVersions = oldData.versions.toSet()
 					Set<String> newVersions = client.gameVersions.toSet()
@@ -127,7 +153,7 @@ class DataManager implements AutoCloseable {
 					}
 				}
 				else {
-					// If no existing data, then unconditionally update
+					// If no existing data, then unconditionally pull and persist data.
 					log.info "No existing data"
 					offerNewData makeData(), true
 				}
@@ -142,10 +168,12 @@ class DataManager implements AutoCloseable {
 		}
 	}
 
-	void persistenceUpdateLoop() {
+	/**
+	 * Updater loop that periodically pulls from persistent storage.
+	 */
+	private void persistenceUpdateLoop() {
 		while (!stop) {
 			try {
-
 				log.info "Persistence: Getting Data"
 				FullData fd = pers.data
 				if (fd == null) {
@@ -170,10 +198,11 @@ class DataManager implements AutoCloseable {
 		return client.getById(BaseParam, 1).schemaVersion
 	}
 
-	private FullData retrievePersistentData() {
-		return pers.data
-	}
-
+	/**
+	 * Pull current live data from Xivapi.
+	 *
+	 * @return The data pack.
+	 */
 	private FullData makeData() {
 		try {
 
@@ -304,6 +333,9 @@ class DataManager implements AutoCloseable {
 		}
 	}
 
+	/**
+	 * @return True if this DataManager has data from any source.
+	 */
 	boolean isReady() {
 		if (!dataFuture.isDone()) {
 			return false
@@ -320,6 +352,12 @@ class DataManager implements AutoCloseable {
 		}
 	}
 
+	/**
+	 * @return The data, from any source, in the form of a future. Note that this future will initially be in
+	 * "RUNNING" state, and will transition to "SUCCESS" upon the first ingestion of data from any source. However,
+	 * this future will not be updated with newer data. Thus, it should never be stored and queried later - you should
+	 * always re-query this method.
+	 */
 	Future<FullData> getDataFuture() {
 		return dataFuture
 	}
