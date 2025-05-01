@@ -1,10 +1,12 @@
 package gg.xp.xivgear.dataapi.gear
 
+/**
+ * Utility class for information about specific levels of gear.
+ */
+final class GearLevels {
 
-import jakarta.inject.Singleton
-
-@Singleton
-class GearLevels {
+	private GearLevels() {
+	}
 
 	/**
 	 * Check whether an ilvl matches the basic start-of-expac artifact level

@@ -15,6 +15,9 @@ import jakarta.inject.Singleton
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
+/**
+ * DataPersistence is responsible for storing and retrieving data packs into object storage.
+ */
 @Slf4j
 @Singleton
 class DataPersistence {

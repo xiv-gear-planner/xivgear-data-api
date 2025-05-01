@@ -3,6 +3,10 @@ package gg.xp.xivgear.dataapi.models
 
 import groovy.transform.TupleConstructor
 
+/**
+ * FoodImpl combines an 'Item' and its corresponding 'ItemFood' row into a single view which includes
+ * the food bonuses.
+ */
 @TupleConstructor(includeFields = true, defaults = false)
 class FoodImpl implements Food {
 

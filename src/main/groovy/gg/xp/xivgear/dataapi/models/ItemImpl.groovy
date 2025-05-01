@@ -2,6 +2,10 @@ package gg.xp.xivgear.dataapi.models
 
 import groovy.transform.TupleConstructor
 
+/**
+ * ItemImpl combines the 'Item' sheet row with the gear acquisition source, and also provides helper methods
+ * to calculate the item's effective bonuses.
+ */
 @TupleConstructor(includeFields = true, defaults = false)
 class ItemImpl implements Item {
 //	@Delegate(interfaces = false, excludes = ['getBaseParam', 'getBaseParamSpecial', 'getBaseParamValue', 'getBaseParamValueSpecial'])
