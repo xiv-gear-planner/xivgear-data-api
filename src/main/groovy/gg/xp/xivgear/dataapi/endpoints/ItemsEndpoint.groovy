@@ -14,6 +14,10 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
 import io.swagger.v3.oas.annotations.Operation
 
+/**
+ * Endpoint for items. Supports querying items for multiple jobs. The key type is defined as a Set of job names, so that
+ * order does not matter. i.e. job=WHM,AST will cache the same as job=AST,WHM.
+ */
 @Context
 @Controller("/Items")
 @CompileStatic
