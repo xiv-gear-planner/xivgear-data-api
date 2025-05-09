@@ -14,17 +14,21 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
 import io.swagger.v3.oas.annotations.Operation
 
+/**
+ * Endpoint for items. Supports querying items for multiple jobs. The key type is defined as a Set of job names, so that
+ * order does not matter. i.e. job=WHM,AST will cache the same as job=AST,WHM.
+ */
 @Context
 @Controller("/Items")
 @CompileStatic
-class ItemsEndpoint extends BaseDataEndpoint<String, Response> {
+class ItemsEndpoint extends BaseDataEndpoint<Set<String>, Response> {
 
 	ItemsEndpoint(DataManager dm) {
 		super(dm)
 	}
 
 	@TupleConstructor(includeFields = true)
-	private static class Response {
+	static class Response {
 		@SuppressWarnings('unused')
 		final List<Item> items
 	}
@@ -33,13 +37,17 @@ class ItemsEndpoint extends BaseDataEndpoint<String, Response> {
 	@Operation(summary = "Get applicable gear items")
 	@Get("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	HttpResponse<Response> items(HttpRequest<?> request, String job) {
-		return makeResponse(request, job)
+	HttpResponse<Response> items(HttpRequest<?> request, List<String> job) {
+		return makeResponse(request, job as Set<String>)
 	}
 
 	@Override
-	protected Response getContent(FullData fd, String job) {
-		List<Item> items = fd.items.findAll { it.classJobCategory.jobs[job] }
+	protected Response getContent(FullData fd, Set<String> jobs) {
+		List<Item> items = fd.items.findAll {
+			jobs.any { job ->
+				it.classJobCategory.jobs[job]
+			}
+		}
 		return new Response(items)
 	}
 }
