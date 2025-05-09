@@ -76,12 +76,17 @@ dependencies {
 	// Local for testing
 	implementation("io.micronaut.objectstorage:micronaut-object-storage-local")
 
-
+	testImplementation "io.micronaut.test:micronaut-test-junit5:1.1.5"
+	testImplementation "io.micronaut:micronaut-inject-groovy"
+	testImplementation "io.micronaut:micronaut-http-client"
 }
 
 test {
+	systemProperties["junit.jupiter.execution.parallel.enabled"] = true
+	systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
 	useJUnitPlatform()
 	systemProperties['xivapi.baseUri'] = System.getProperty("xivapi.baseUri") ?: 'https://bm.xivgear.app/api/1'
+
 }
 
 application {

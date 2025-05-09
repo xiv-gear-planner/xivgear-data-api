@@ -23,7 +23,7 @@ public interface ItemBase extends XivApiObject {
 
 	Icon getIcon();
 
-	// Ignored because of another method providing this
+	// Ignored because of another method providing this. See Item.getClassJobs()
 	@JsonIgnore
 	ClassJobCategory getClassJobCategory();
 
