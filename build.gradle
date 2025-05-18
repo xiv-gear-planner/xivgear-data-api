@@ -32,7 +32,7 @@ tasks.named("dockerfile") {
 
 dependencies {
 	implementation 'org.apache.groovy:groovy:4.0.22'
-	implementation group: 'app.xivgear', name: 'xivapi-java', version: '0.1.11-SNAPSHOT'
+	implementation group: 'app.xivgear', name: 'xivapi-java', version: '0.1.11'
 
 	testImplementation platform('org.junit:junit-bom:5.11.0')
 	testImplementation 'org.junit.jupiter:junit-jupiter'
