@@ -1,6 +1,7 @@
 package gg.xp.xivgear.dataapi.models
 
 import groovy.transform.TupleConstructor
+import io.micronaut.core.annotation.Nullable
 
 /**
  * ItemImpl combines the 'Item' sheet row with the gear acquisition source, and also provides helper methods
@@ -8,12 +9,12 @@ import groovy.transform.TupleConstructor
  */
 @TupleConstructor(includeFields = true, defaults = false)
 class ItemImpl implements Item {
-//	@Delegate(interfaces = false, excludes = ['getBaseParam', 'getBaseParamSpecial', 'getBaseParamValue', 'getBaseParamValueSpecial'])
 	@Delegate
 	private final ItemBase base
 
 	private final GearAcquisitionSource acquisitionSource
 
+	@Override
 	Map<Integer, Integer> getBaseParamMap() {
 		Map<Integer, Integer> out = [:]
 		base.baseParam.eachWithIndex { int entry, int i ->
@@ -25,31 +26,47 @@ class ItemImpl implements Item {
 			}
 		}
 		return out
-	};
+	}
 
+	@Override
 	Map<Integer, Integer> getBaseParamMapHQ() {
 		if (canBeHq) {
-			Map<Integer, Integer> out = new HashMap(getBaseParamMap())
-			base.baseParamSpecial.eachWithIndex { int entry, int i ->
-				if (entry != 0) {
-					int value = base.baseParamValueSpecial[i]
-					if (value != 0) {
-						out.compute(entry, { Integer k, Integer v ->
-							if (v == null) {
-								return value
-							}
-							else {
-								return v + value
-							}
-						})
-					}
-				}
-			}
-			return out
+			return baseParamMapSpecialInternal
 		}
 		else {
-			return getBaseParamMap()
+			return baseParamMap
 		}
+	}
+
+	@Override
+	@Nullable
+	Map<Integer, Integer> getBaseParamMapSpecial() {
+		return specialStatType == null ? null : baseParamMapSpecialInternal
+	}
+
+	/**
+	 * @return A map of BaseParam id number to stat value, but with BaseParam and BaseParamSpecial summed together.
+	 * i.e. represents the HQ stats of an item with HQ/NQ variants (HQ stats = BaseParam (NQ stats) + BaseParamSpecial).
+	 * Also used for things like Occult Crescent items.
+	 */
+	private Map<Integer, Integer> getBaseParamMapSpecialInternal() {
+		Map<Integer, Integer> out = new HashMap(baseParamMap)
+		base.baseParamSpecial.eachWithIndex { int entry, int i ->
+			if (entry != 0) {
+				int value = base.baseParamValueSpecial[i]
+				if (value != 0) {
+					out.compute(entry, { Integer k, Integer v ->
+						if (v == null) {
+							return value
+						}
+						else {
+							return v + value
+						}
+					})
+				}
+			}
+		}
+		return out
 	}
 
 	@Override
@@ -57,7 +74,7 @@ class ItemImpl implements Item {
 		return base.classJobCategory.jobs
 				.findAll { it.value }
 				.collect { it.key }
-	};
+	}
 
 	@Override
 	int getDamageMagHQ() {
@@ -72,5 +89,14 @@ class ItemImpl implements Item {
 	@Override
 	GearAcquisitionSource getAcquisitionSource() {
 		return acquisitionSource
+	}
+
+	@Nullable
+	SpecialStatType getSpecialStatType() {
+		// Occult Crescent items are i745 and have a BaseParamSpecial for BaseParam 54 "Special Attribute"
+		if (ilvl == 745 && baseParamMapSpecialInternal.containsKey(54)) {
+			return SpecialStatType.OccultCrescent
+		}
+		return null
 	}
 }
