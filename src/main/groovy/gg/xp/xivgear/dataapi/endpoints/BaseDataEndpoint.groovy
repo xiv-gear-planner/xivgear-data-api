@@ -44,19 +44,26 @@ abstract class BaseDataEndpoint<In, Out> {
 	protected abstract Out getContent(FullData data, In input);
 
 	protected HttpResponse<Out> makeResponse(@NonNull HttpRequest<?> request, In input) {
+		// First check - is the DM ready?
 		if (dm.ready) {
 			FullData data = dm.dataFuture.get()
+			// Check client If-Modified-Since header so that we don't send data that
+			// has already been cached.
 			String ifModifiedHeader = request.headers.get(HttpHeaders.IF_MODIFIED_SINCE)
 			ZonedDateTime dataModified = data.timestamp.atZone(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
 			if (ifModifiedHeader != null) {
 				ZonedDateTime headerTimestamp = ZonedDateTime.parse(ifModifiedHeader, DateTimeFormatter.RFC_1123_DATE_TIME).truncatedTo(ChronoUnit.SECONDS)
+				// If the header's value is non-null, and does not predate the DM timestamp, tell the client that they
+				// already have the latest.
 				if (!headerTimestamp.isBefore(dataModified)) {
 					return HttpResponse.notModified()
 				}
 			}
+			// Calls the abstract method to get the actual content for the response.
+			// Note that this only happens if we have determined that we cannot send back a "not modified" response.
 			Out content = getContent(data, input)
-			// TODO: decide appropriate cache duration
 			return HttpResponse.ok(content).with {
+				// Add last modified header
 				header HttpHeaders.LAST_MODIFIED, dataModified.format(DateTimeFormatter.RFC_1123_DATE_TIME)
 				// TODO: add stale-if-error=3600*24 (or higher)
 				header HttpHeaders.CACHE_CONTROL, "max-age=1200, public"
