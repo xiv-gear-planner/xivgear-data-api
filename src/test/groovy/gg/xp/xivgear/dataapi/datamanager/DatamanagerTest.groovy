@@ -2,6 +2,7 @@ package gg.xp.xivgear.dataapi.datamanager
 
 import gg.xp.xivgear.dataapi.models.GearAcquisitionSource
 import gg.xp.xivgear.dataapi.models.Item
+import gg.xp.xivgear.dataapi.models.SpecialStatType
 import gg.xp.xivgear.dataapi.persistence.DataPersistence
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -10,6 +11,7 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
+
 
 @Slf4j
 @CompileStatic
@@ -37,28 +39,39 @@ class DatamanagerTest {
 			int det = 44
 			int crt = 27
 			// https://na.finalfantasyxiv.com/lodestone/playguide/db/item/91f11c2f0cd/
-			Assertions.assertEquals(354, archeoBroadSword.baseParamMap[str])
-			Assertions.assertEquals(393, archeoBroadSword.baseParamMapHQ[str])
+			Assertions.assertEquals 354, archeoBroadSword.baseParamMap[str]
+			Assertions.assertEquals 393, archeoBroadSword.baseParamMapHQ[str]
 
-			Assertions.assertEquals(366, archeoBroadSword.baseParamMap[vit])
-			Assertions.assertEquals(407, archeoBroadSword.baseParamMapHQ[vit])
+			Assertions.assertEquals 366, archeoBroadSword.baseParamMap[vit]
+			Assertions.assertEquals 407, archeoBroadSword.baseParamMapHQ[vit]
 
-			Assertions.assertEquals(166, archeoBroadSword.baseParamMap[crt])
-			Assertions.assertEquals(185, archeoBroadSword.baseParamMapHQ[crt])
+			Assertions.assertEquals 166, archeoBroadSword.baseParamMap[crt]
+			Assertions.assertEquals 185, archeoBroadSword.baseParamMapHQ[crt]
 
-			Assertions.assertEquals(238, archeoBroadSword.baseParamMap[det])
-			Assertions.assertEquals(264, archeoBroadSword.baseParamMapHQ[det])
+			Assertions.assertEquals 238, archeoBroadSword.baseParamMap[det]
+			Assertions.assertEquals 264, archeoBroadSword.baseParamMapHQ[det]
 
-			Assertions.assertEquals(127, archeoBroadSword.damagePhys)
-			Assertions.assertEquals(64, archeoBroadSword.damageMag)
+			Assertions.assertEquals 127, archeoBroadSword.damagePhys
+			Assertions.assertEquals 64, archeoBroadSword.damageMag
 
-			Assertions.assertEquals(141, archeoBroadSword.damagePhysHQ)
-			Assertions.assertEquals(71, archeoBroadSword.damageMagHQ)
+			Assertions.assertEquals 141, archeoBroadSword.damagePhysHQ
+			Assertions.assertEquals 71, archeoBroadSword.damageMagHQ
 		}
 
 		{
 			Item quetzalliCane = fd.items.find { it.rowId == 42952 }
-			Assertions.assertEquals(GearAcquisitionSource.Tome, quetzalliCane.acquisitionSource)
+			Assertions.assertEquals GearAcquisitionSource.Tome, quetzalliCane.acquisitionSource
+		}
+		// Test the special occult items
+		{
+			// Arcanaut Robe of Healing +2
+			Item arcaRobeHeal2 = fd.items.find { it.rowId == 47844 }
+			// 5 == MND
+			Assertions.assertEquals 639, arcaRobeHeal2.baseParamMap[5]
+			Assertions.assertEquals 639, arcaRobeHeal2.baseParamMapHQ[5]
+			// It gets +120 at level +2
+			Assertions.assertEquals 120, arcaRobeHeal2.baseParamMapSpecial[5]
+			Assertions.assertEquals SpecialStatType.OccultCrescent, arcaRobeHeal2.specialStatType
 		}
 
 		// Now serialize and de-serialize
@@ -84,28 +97,28 @@ class DatamanagerTest {
 			int det = 44
 			int crt = 27
 			// https://na.finalfantasyxiv.com/lodestone/playguide/db/item/91f11c2f0cd/
-			Assertions.assertEquals(354, archeoBroadSword.baseParamMap[str])
-			Assertions.assertEquals(393, archeoBroadSword.baseParamMapHQ[str])
+			Assertions.assertEquals 354, archeoBroadSword.baseParamMap[str]
+			Assertions.assertEquals 393, archeoBroadSword.baseParamMapHQ[str]
 
-			Assertions.assertEquals(366, archeoBroadSword.baseParamMap[vit])
-			Assertions.assertEquals(407, archeoBroadSword.baseParamMapHQ[vit])
+			Assertions.assertEquals 366, archeoBroadSword.baseParamMap[vit]
+			Assertions.assertEquals 407, archeoBroadSword.baseParamMapHQ[vit]
 
-			Assertions.assertEquals(166, archeoBroadSword.baseParamMap[crt])
-			Assertions.assertEquals(185, archeoBroadSword.baseParamMapHQ[crt])
+			Assertions.assertEquals 166, archeoBroadSword.baseParamMap[crt]
+			Assertions.assertEquals 185, archeoBroadSword.baseParamMapHQ[crt]
 
-			Assertions.assertEquals(238, archeoBroadSword.baseParamMap[det])
-			Assertions.assertEquals(264, archeoBroadSword.baseParamMapHQ[det])
+			Assertions.assertEquals 238, archeoBroadSword.baseParamMap[det]
+			Assertions.assertEquals 264, archeoBroadSword.baseParamMapHQ[det]
 
-			Assertions.assertEquals(127, archeoBroadSword.damagePhys)
-			Assertions.assertEquals(64, archeoBroadSword.damageMag)
+			Assertions.assertEquals 127, archeoBroadSword.damagePhys
+			Assertions.assertEquals 64, archeoBroadSword.damageMag
 
-			Assertions.assertEquals(141, archeoBroadSword.damagePhysHQ)
-			Assertions.assertEquals(71, archeoBroadSword.damageMagHQ)
+			Assertions.assertEquals 141, archeoBroadSword.damagePhysHQ
+			Assertions.assertEquals 71, archeoBroadSword.damageMagHQ
 		}
 
 		{
 			Item quetzalliCane = deserialized.items.find { it.rowId == 42952 }
-			Assertions.assertEquals(GearAcquisitionSource.Tome, quetzalliCane.acquisitionSource)
+			Assertions.assertEquals GearAcquisitionSource.Tome, quetzalliCane.acquisitionSource
 		}
 
 		log.info "Checking persistence"
@@ -129,28 +142,28 @@ class DatamanagerTest {
 			int det = 44
 			int crt = 27
 			// https://na.finalfantasyxiv.com/lodestone/playguide/db/item/91f11c2f0cd/
-			Assertions.assertEquals(354, archeoBroadSword.baseParamMap[str])
-			Assertions.assertEquals(393, archeoBroadSword.baseParamMapHQ[str])
+			Assertions.assertEquals 354, archeoBroadSword.baseParamMap[str]
+			Assertions.assertEquals 393, archeoBroadSword.baseParamMapHQ[str]
 
-			Assertions.assertEquals(366, archeoBroadSword.baseParamMap[vit])
-			Assertions.assertEquals(407, archeoBroadSword.baseParamMapHQ[vit])
+			Assertions.assertEquals 366, archeoBroadSword.baseParamMap[vit]
+			Assertions.assertEquals 407, archeoBroadSword.baseParamMapHQ[vit]
 
-			Assertions.assertEquals(166, archeoBroadSword.baseParamMap[crt])
-			Assertions.assertEquals(185, archeoBroadSword.baseParamMapHQ[crt])
+			Assertions.assertEquals 166, archeoBroadSword.baseParamMap[crt]
+			Assertions.assertEquals 185, archeoBroadSword.baseParamMapHQ[crt]
 
-			Assertions.assertEquals(238, archeoBroadSword.baseParamMap[det])
-			Assertions.assertEquals(264, archeoBroadSword.baseParamMapHQ[det])
+			Assertions.assertEquals 238, archeoBroadSword.baseParamMap[det]
+			Assertions.assertEquals 264, archeoBroadSword.baseParamMapHQ[det]
 
-			Assertions.assertEquals(127, archeoBroadSword.damagePhys)
-			Assertions.assertEquals(64, archeoBroadSword.damageMag)
+			Assertions.assertEquals 127, archeoBroadSword.damagePhys
+			Assertions.assertEquals 64, archeoBroadSword.damageMag
 
-			Assertions.assertEquals(141, archeoBroadSword.damagePhysHQ)
-			Assertions.assertEquals(71, archeoBroadSword.damageMagHQ)
+			Assertions.assertEquals 141, archeoBroadSword.damagePhysHQ
+			Assertions.assertEquals 71, archeoBroadSword.damageMagHQ
 		}
 
 		{
 			Item quetzalliCane = fromPers.items.find { it.rowId == 42952 }
-			Assertions.assertEquals(GearAcquisitionSource.Tome, quetzalliCane.acquisitionSource)
+			Assertions.assertEquals GearAcquisitionSource.Tome, quetzalliCane.acquisitionSource
 		}
 
 
