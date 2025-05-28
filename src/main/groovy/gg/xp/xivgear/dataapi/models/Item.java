@@ -19,9 +19,8 @@ public interface Item extends ItemBase {
 	Map<Integer, Integer> getBaseParamMapHQ();
 
 	/**
-	 * @return The map of BaseParam id number to the value, for items without NQ/HQ variants, but with some
-	 * kind of special conditional stats (e.g. Occult Crescent-specific bonuses). For items where this
-	 * does not apply, returns null.
+	 * @return The special stat values for items such as Occult Crescent gear. Not used for simple HQ/NQ
+	 * differentiation - use {@link #getBaseParamMap()} and {@link #getBaseParamMapHQ()} for that.
 	 */
 	@Nullable
 	Map<Integer, Integer> getBaseParamMapSpecial();

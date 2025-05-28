@@ -31,7 +31,7 @@ class ItemImpl implements Item {
 	@Override
 	Map<Integer, Integer> getBaseParamMapHQ() {
 		if (canBeHq) {
-			return baseParamMapSpecialInternal
+			return baseParamPlusSpecial
 		}
 		else {
 			return baseParamMap
@@ -41,7 +41,19 @@ class ItemImpl implements Item {
 	@Override
 	@Nullable
 	Map<Integer, Integer> getBaseParamMapSpecial() {
-		return specialStatType == null ? null : baseParamMapSpecialInternal
+		if (specialStatType == null) {
+			return null
+		}
+		Map<Integer, Integer> out = [:]
+		base.baseParamSpecial.eachWithIndex { int entry, int i ->
+			if (entry != 0) {
+				int value = base.baseParamValueSpecial[i]
+				if (value != 0) {
+					out[entry] = value
+				}
+			}
+		}
+		return out
 	}
 
 	/**
@@ -49,7 +61,7 @@ class ItemImpl implements Item {
 	 * i.e. represents the HQ stats of an item with HQ/NQ variants (HQ stats = BaseParam (NQ stats) + BaseParamSpecial).
 	 * Also used for things like Occult Crescent items.
 	 */
-	private Map<Integer, Integer> getBaseParamMapSpecialInternal() {
+	private Map<Integer, Integer> getBaseParamPlusSpecial() {
 		Map<Integer, Integer> out = new HashMap(baseParamMap)
 		base.baseParamSpecial.eachWithIndex { int entry, int i ->
 			if (entry != 0) {
@@ -94,7 +106,7 @@ class ItemImpl implements Item {
 	@Nullable
 	SpecialStatType getSpecialStatType() {
 		// Occult Crescent items are i745 and have a BaseParamSpecial for BaseParam 54 "Special Attribute"
-		if (ilvl == 745 && baseParamMapSpecialInternal.containsKey(54)) {
+		if (ilvl == 745 && baseParamPlusSpecial.containsKey(54)) {
 			return SpecialStatType.OccultCrescent
 		}
 		return null

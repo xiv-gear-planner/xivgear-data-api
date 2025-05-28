@@ -70,7 +70,7 @@ class DatamanagerTest {
 			Assertions.assertEquals 639, arcaRobeHeal2.baseParamMap[5]
 			Assertions.assertEquals 639, arcaRobeHeal2.baseParamMapHQ[5]
 			// It gets +120 at level +2
-			Assertions.assertEquals 639 + 120, arcaRobeHeal2.baseParamMapSpecial[5]
+			Assertions.assertEquals 120, arcaRobeHeal2.baseParamMapSpecial[5]
 			Assertions.assertEquals SpecialStatType.OccultCrescent, arcaRobeHeal2.specialStatType
 		}
 
