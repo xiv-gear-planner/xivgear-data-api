@@ -9,7 +9,7 @@ import io.micronaut.http.annotation.Produces
 import io.swagger.v3.oas.annotations.Operation
 
 @Context
-
+@CompileStatic
 @Controller("/healthz")
 class Healthcheck {
 

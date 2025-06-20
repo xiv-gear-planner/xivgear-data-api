@@ -1,2 +1,5 @@
 rootProject.name = 'xivgear-data-api'
 
+include ":common-libs"
+include ":common-libs:logging"
+

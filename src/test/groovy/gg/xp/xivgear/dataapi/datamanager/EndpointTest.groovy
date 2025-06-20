@@ -30,12 +30,14 @@ class EndpointTest {
 	DataManager dm
 
 	private static final class ItemResponseDummy {
-		@JsonProperty
+		// Explicitly specify expected field name to test property naming
+		@JsonProperty("items")
 		List<ItemDummy> items
 	}
 
 	private static final class ItemDummy {
-		@JsonProperty
+		// Explicitly specify expected field name to test property naming
+		@JsonProperty("classJobs")
 		List<String> classJobs
 	}
 
@@ -43,8 +45,8 @@ class EndpointTest {
 	@Timeout(120)
 	void testSingleJobItems() {
 		dm.dataFuture.get()
-		HttpRequest<?> req = HttpRequest.GET(server.URL.toString() + "/Items?job=WHM")
-		String singleJobResponseRaw = client.toBlocking().exchange(req, String).body()
+		HttpRequest<?> req = HttpRequest.GET(server.URI.resolve("/Items?job=WHM"))
+//		String singleJobResponseRaw = client.toBlocking().exchange(req, String).body()
 		ItemResponseDummy singleJobResponse = client.toBlocking().exchange(req, ItemResponseDummy).body()
 		Assertions.assertAll(
 				"should only contain WHM items",
@@ -64,7 +66,7 @@ class EndpointTest {
 		HttpRequest<?> req = HttpRequest.GET(server.URI.resolve("/Items?job=WHM,PLD,MNK"))
 		ItemResponseDummy multiJobResponse = client.toBlocking().exchange(req, ItemResponseDummy).body()
 		Assertions.assertAll(
-				"should only contain WHM items",
+				"should only contain WHM/PLD/MNK items",
 				multiJobResponse.items.collect { item ->
 					return (Executable) { ->
 						Assertions.assertTrue(
