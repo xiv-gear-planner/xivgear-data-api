@@ -19,7 +19,9 @@ import io.swagger.v3.oas.annotations.info.License
 class Main {
 
 	static void main(String[] args) {
-		Micronaut.run(Main, args)
+		Micronaut.build(args).with {
+			it.args args
+			packages 'app.xivgear.logging'
+		}.start()
 	}
-
 }
