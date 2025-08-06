@@ -18,7 +18,6 @@ class JacksonExtras {
 
 	@Inject
 	void customize(ObjectMapper mapper) {
-//		mapper.setPropertyNamingStrategy(new CapitalizedPropertyNamingStrategy())
 		mapper.setSerializationInclusion(JsonInclude.Include.ALWAYS)
 		mapper.registerModule(new Jdk8Module())
 	}

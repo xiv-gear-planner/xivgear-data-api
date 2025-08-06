@@ -4,18 +4,19 @@ micronaut:
   server:
     cors:
       enabled: true
+
   openapi:
     enabled: true
-    config:
-      # TODO: is this still used?
-      property-naming-strategy: gg.xp.xivgear.dataapi.serialization.CapitalizedPropertyNamingStrategy
+    schema:
+      field-nullable: false
+      require-properties: true
+
   swagger:
     enabled: true
-    config:
-      # TODO: is this still used?
-      property-naming-strategy: gg.xp.xivgear.dataapi.serialization.CapitalizedPropertyNamingStrategy
+
   swagger-ui:
     enabled: true
+
   router:
     static-resources:
       swagger:
