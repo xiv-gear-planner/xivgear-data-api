@@ -133,14 +133,15 @@ class DatamanagerTest {
 
 		// New instance that only uses persisted data
 		var dp = new DataPersistence(storage)
-		var fromPers = dp.data;
+		var fromPers = dp.data
+		int str = 1
+		int vit = 3
+		int det = 44
+		int crt = 27
+		int intelligence = 4;
 
 		{
 			Item archeoBroadSword = fromPers.items.find { it.rowId == 42870 }
-			int str = 1
-			int vit = 3
-			int det = 44
-			int crt = 27
 			// https://na.finalfantasyxiv.com/lodestone/playguide/db/item/91f11c2f0cd/
 			Assertions.assertEquals 354, archeoBroadSword.baseParamMap[str]
 			Assertions.assertEquals 393, archeoBroadSword.baseParamMapHQ[str]
@@ -164,6 +165,41 @@ class DatamanagerTest {
 		{
 			Item quetzalliCane = fromPers.items.find { it.rowId == 42952 }
 			Assertions.assertEquals GearAcquisitionSource.Tome, quetzalliCane.acquisitionSource
+		}
+
+		{
+			// Snow Linen Jacket of Casting
+			// https://na.finalfantasyxiv.com/lodestone/playguide/db/item/77760c198b8/
+			Item item = fd.items.find { it.rowId == 34431 }
+			Assertions.assertEquals 299, item.defensePhys
+			Assertions.assertEquals 523, item.defenseMag
+			Assertions.assertEquals 332, item.defensePhysHQ
+			Assertions.assertEquals 581, item.defenseMagHQ
+			Assertions.assertEquals 176, item.baseParamMap[vit]
+			Assertions.assertEquals 127, item.baseParamMap[crt]
+			Assertions.assertEquals 181, item.baseParamMap[det]
+			Assertions.assertEquals 186, item.baseParamMap[intelligence]
+			Assertions.assertEquals 196, item.baseParamMapHQ[vit]
+			Assertions.assertEquals 141, item.baseParamMapHQ[crt]
+			Assertions.assertEquals 201, item.baseParamMapHQ[det]
+			Assertions.assertEquals 207, item.baseParamMapHQ[intelligence]
+		}
+		{
+			// Snow Linen Jacket of Casting
+			// https://na.finalfantasyxiv.com/lodestone/playguide/db/item/77760c198b8/
+			Item item = fromPers.items.find { it.rowId == 34431 }
+			Assertions.assertEquals 299, item.defensePhys
+			Assertions.assertEquals 523, item.defenseMag
+			Assertions.assertEquals 332, item.defensePhysHQ
+			Assertions.assertEquals 581, item.defenseMagHQ
+			Assertions.assertEquals 176, item.baseParamMap[vit]
+			Assertions.assertEquals 127, item.baseParamMap[crt]
+			Assertions.assertEquals 181, item.baseParamMap[det]
+			Assertions.assertEquals 186, item.baseParamMap[intelligence]
+			Assertions.assertEquals 196, item.baseParamMapHQ[vit]
+			Assertions.assertEquals 141, item.baseParamMapHQ[crt]
+			Assertions.assertEquals 201, item.baseParamMapHQ[det]
+			Assertions.assertEquals 207, item.baseParamMapHQ[intelligence]
 		}
 
 

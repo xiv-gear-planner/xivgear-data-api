@@ -22,7 +22,7 @@ class FullData implements Serializable {
 	// The persistence later avoids conflicts between concurrently-running versions by
 	// using a different object storage key based on the serialVersionUID
 	@Serial
-	static final long serialVersionUID = 12
+	static final long serialVersionUID = 13
 
 	final List<String> versions
 	final List<BaseParam> baseParams
@@ -39,10 +39,10 @@ class FullData implements Serializable {
 		// Used to determine acq source for un-augmented tome items
 		Set<String> itemNames = new HashSet<>()
 		itemBases.each {
-			itemNames.add(it.name)
+			itemNames.add it.name
 		}
 		items = itemBases.collect { base ->
-			GearAcquisitionSource source = GearSource.getAcquisitionSource(this, base, itemNames)
+			GearAcquisitionSource source = GearSource.getAcquisitionSource this, base, itemNames
 			return new ItemImpl(base, source) as Item
 		}
 	}

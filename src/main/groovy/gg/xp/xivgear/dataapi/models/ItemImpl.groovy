@@ -99,6 +99,16 @@ class ItemImpl implements Item {
 	}
 
 	@Override
+	int getDefenseMagHQ() {
+		return getDefenseMag() + (getBaseParamMapHQ()[24] ?: 0)
+	}
+
+	@Override
+	int getDefensePhysHQ() {
+		return getDefensePhys() + (getBaseParamMapHQ()[21] ?: 0)
+	}
+
+	@Override
 	GearAcquisitionSource getAcquisitionSource() {
 		return acquisitionSource
 	}
