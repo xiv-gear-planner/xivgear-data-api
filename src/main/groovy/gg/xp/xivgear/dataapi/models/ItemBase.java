@@ -66,4 +66,7 @@ public interface ItemBase extends XivApiObject {
 	@XivApiField("LevelEquip")
 	int getEquipLevel();
 
+	int getDefensePhys();
+
+	int getDefenseMag();
 }

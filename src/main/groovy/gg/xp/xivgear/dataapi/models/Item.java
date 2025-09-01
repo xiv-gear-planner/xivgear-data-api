@@ -53,4 +53,16 @@ public interface Item extends ItemBase {
 	 * correctly requires SpecialShop.
 	 */
 	GearAcquisitionSource getAcquisitionSource();
+
+	/**
+	 * @return Magic Defense for the HQ variant, if it exists. If it does not exist,
+	 * returns the same as {@link #getDefenseMag()}.
+	 */
+	int getDefenseMagHQ();
+
+	/**
+	 * @return Physical Defense (just "Defense" in-game) for the HQ variant, if it exists. If it does not exist,
+	 * returns the same as {@link #getDefensePhys()} ()}.
+	 */
+	int getDefensePhysHQ();
 }
