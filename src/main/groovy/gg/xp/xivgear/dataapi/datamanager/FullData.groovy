@@ -39,10 +39,10 @@ class FullData implements Serializable {
 		// Used to determine acq source for un-augmented tome items
 		Set<String> itemNames = new HashSet<>()
 		itemBases.each {
-			itemNames.add(it.name)
+			itemNames.add it.name
 		}
 		items = itemBases.collect { base ->
-			GearAcquisitionSource source = GearSource.getAcquisitionSource(this, base, itemNames)
+			GearAcquisitionSource source = GearSource.getAcquisitionSource this, base, itemNames
 			return new ItemImpl(base, source) as Item
 		}
 	}
