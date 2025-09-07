@@ -3,6 +3,7 @@ package gg.xp.xivgear.dataapi.models;
 import gg.xp.xivapi.annotations.XivApiSheet;
 import gg.xp.xivapi.clienttypes.XivApiObject;
 
+@SuppressWarnings("unused")
 @XivApiSheet
 public interface BaseParam extends XivApiObject {
 
@@ -23,5 +24,6 @@ public interface BaseParam extends XivApiObject {
 	int getBraceletPercent();
 	int getRingPercent();
 
+	Integer[] getMeldParam();
 
 }
