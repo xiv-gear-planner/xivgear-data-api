@@ -3,6 +3,7 @@
     <ExternalSystemSettings>
       <option name="env">
         <map>
+          <entry key="JAVA_TOOL_OPTIONS" value=" -XX:+UseG1GC -XX:MinHeapFreeRatio=15 -XX:MaxHeapFreeRatio=30 -Xmx256m" />
           <entry key="MICRONAUT_SERVER_PORT" value="8085" />
         </map>
       </option>
@@ -18,7 +19,7 @@
           <option value="run" />
         </list>
       </option>
-      <option name="vmOptions" value="-XX:+UseG1GC -XX:MinHeapFreeRatio=15 -XX:MaxHeapFreeRatio=30 -XX:MaxRAMPercentage=70" />
+      <option name="vmOptions" value=" " />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>

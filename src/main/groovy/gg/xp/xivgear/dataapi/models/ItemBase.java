@@ -69,4 +69,11 @@ public interface ItemBase extends XivApiObject {
 	int getDefensePhys();
 
 	int getDefenseMag();
+
+	/**
+	 * Eureka, Occult, etc
+	 */
+	@XivApiRaw
+	@JsonIgnore
+	int getItemSpecialBonus();
 }
