@@ -56,6 +56,7 @@ class DatamanagerTest {
 
 			Assertions.assertEquals 141, archeoBroadSword.damagePhysHQ
 			Assertions.assertEquals 71, archeoBroadSword.damageMagHQ
+			Assertions.assertNull archeoBroadSword.specialStatType
 		}
 
 		{
@@ -72,6 +73,20 @@ class DatamanagerTest {
 			// It gets +120 at level +2
 			Assertions.assertEquals 120, arcaRobeHeal2.baseParamMapSpecial[5]
 			Assertions.assertEquals SpecialStatType.OccultCrescent, arcaRobeHeal2.specialStatType
+		}
+		// Test Eureka items
+		{
+			Item blitzRing = fd.items.find { it.rowId == 36121 }
+			Assertions.assertEquals SpecialStatType.Eureka, blitzRing.specialStatType
+			// The game files store +haste (i.e. faster) as a negative modifier
+			Assertions.assertEquals(-3, blitzRing.baseParamMapSpecial[47])
+		}
+		// Test Bozja items
+		{
+			Item augLawOrderHealChest = fd.items.find { it.rowId == 32784 }
+			Assertions.assertEquals SpecialStatType.Bozja, augLawOrderHealChest.specialStatType
+			// The game files store +haste (i.e. faster) as a negative modifier
+			Assertions.assertEquals(-3, augLawOrderHealChest.baseParamMapSpecial[47])
 		}
 
 		// Now serialize and de-serialize
@@ -114,6 +129,7 @@ class DatamanagerTest {
 
 			Assertions.assertEquals 141, archeoBroadSword.damagePhysHQ
 			Assertions.assertEquals 71, archeoBroadSword.damageMagHQ
+			Assertions.assertNull archeoBroadSword.specialStatType
 		}
 
 		{

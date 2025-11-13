@@ -19,14 +19,14 @@ micronaut {
 		args "-XX:+UseG1GC"
 		args "-XX:MinHeapFreeRatio=15"
 		args "-XX:MaxHeapFreeRatio=30"
-		args "-XX:MaxRAMPercentage=70"
+		args "-XX:MaxRAMPercentage=60"
 		// TODO measure performance impact
 		args "-XX:+UseStringDeduplication"
 	}
 }
 
-tasks.named("dockerfile") {
-	baseImage = "openjdk:21"
+tasks.named('dockerfile') {
+	baseImage = 'eclipse-temurin:21'
 }
 
 dependencies {

@@ -115,10 +115,11 @@ class ItemImpl implements Item {
 
 	@Nullable
 	SpecialStatType getSpecialStatType() {
-		// Occult Crescent items are i745 and have a BaseParamSpecial for BaseParam 54 "Special Attribute"
-		if (ilvl == 745 && baseParamPlusSpecial.containsKey(54)) {
-			return SpecialStatType.OccultCrescent
+		return switch (itemSpecialBonus) {
+			case 7 -> SpecialStatType.Eureka
+			case 8 -> SpecialStatType.Bozja
+			case 9 -> SpecialStatType.OccultCrescent
+			default -> null
 		}
-		return null
 	}
 }
