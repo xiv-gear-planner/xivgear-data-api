@@ -24,6 +24,13 @@ public interface BaseParam extends XivApiObject {
 	int getBraceletPercent();
 	int getRingPercent();
 
+	int getChestHeadLegsFeetPercent();
+	int getChestHeadPercent();
+	int getChestLegsFeetPercent();
+	int getChestLegsGlovesPercent();
+	int getHeadChestHandsLegsFeetPercent();
+	int getLegsFeetPercent();
+
 	Integer[] getMeldParam();
 
 }
