@@ -1,5 +1,6 @@
 package gg.xp.xivgear.dataapi.endpoints
 
+import gg.xp.xivapi.clienttypes.GameVersion
 import gg.xp.xivgear.dataapi.datamanager.DataManager
 import gg.xp.xivgear.dataapi.datamanager.FullData
 import groovy.transform.TupleConstructor
@@ -13,20 +14,20 @@ import io.micronaut.http.annotation.Produces
 import io.swagger.v3.oas.annotations.Operation
 
 @Context
-@Controller("/Versions")
-class VersionsEndpoint extends BaseDataEndpoint<Void, Response> {
+@Controller("/Versions/Full")
+class VersionsFullEndpoint extends BaseDataEndpoint<Void, Response> {
 
-	VersionsEndpoint(DataManager dm) {
+	VersionsFullEndpoint(DataManager dm) {
 		super(dm)
 	}
 
 	@TupleConstructor(includeFields = true)
 	private static class Response {
-		final List<String> versions
+		final List<GameVersion> versions
 	}
 
 	@SuppressWarnings(['GrMethodMayBeStatic', 'unused'])
-	@Operation(summary = "Get versions available via Xivapi at the time the data was pulled. Returns a flattened list of known version names.")
+	@Operation(summary = "Get versions available via Xivapi at the time the data was pulled. Returns the same shape as Xivapi's verion endpoint would.")
 	@Get("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	HttpResponse<Response> versions(HttpRequest<?> request) {
@@ -35,7 +36,6 @@ class VersionsEndpoint extends BaseDataEndpoint<Void, Response> {
 
 	@Override
 	protected Response getContent(FullData data, Void _) {
-		List<String> versions = data.versions.collectMany { gv -> gv.names() }
-		return new Response(versions)
+		return new Response(data.versions)
 	}
 }
