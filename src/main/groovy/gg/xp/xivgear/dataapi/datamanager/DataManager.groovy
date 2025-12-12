@@ -1,6 +1,7 @@
 package gg.xp.xivgear.dataapi.datamanager
 
 import gg.xp.xivapi.XivApiClient
+import gg.xp.xivapi.clienttypes.GameVersion
 import gg.xp.xivapi.clienttypes.XivApiObject
 import gg.xp.xivapi.clienttypes.XivApiSchemaVersion
 import gg.xp.xivapi.clienttypes.XivApiSettings
@@ -129,8 +130,8 @@ class DataManager implements AutoCloseable {
 					// We consider data to be "different" if either the set of game versions, or the schema
 					// version does not match.
 					FullData oldData = dataFuture.get()
-					Set<String> oldVersions = oldData.versions.toSet()
-					Set<String> newVersions = client.gameVersions.toSet()
+					List<GameVersion> oldVersions = oldData.versions
+					List<GameVersion> newVersions = client.gameVersionsFull
 					XivApiSchemaVersion oldSchema = oldData.schemaVersion
 					XivApiSchemaVersion newSchema = getLiveSchemaVersion()
 					boolean versionSame = oldVersions == newVersions
@@ -213,8 +214,15 @@ class DataManager implements AutoCloseable {
 			client.defaultListOpts = opts
 
 			log.info "Loading versions"
-			List<String> versions = client.gameVersions
+			List<GameVersion> versions = client.gameVersionsFull
 			log.info "Loaded ${versions.size()} versions"
+			GameVersion latest = versions.find { it.names().contains('latest') }
+			if (latest != null) {
+				log.info "'latest' version is ${latest.key()}: (${latest.names().join(', ')})"
+			}
+			else {
+				log.warn("No 'latest' version found!")
+			}
 
 			log.info "Loading BaseParams"
 			// TODO revert this

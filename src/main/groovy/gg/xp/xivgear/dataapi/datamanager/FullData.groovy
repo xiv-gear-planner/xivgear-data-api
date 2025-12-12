@@ -1,5 +1,6 @@
 package gg.xp.xivgear.dataapi.datamanager
 
+import gg.xp.xivapi.clienttypes.GameVersion
 import gg.xp.xivapi.clienttypes.XivApiSchemaVersion
 import gg.xp.xivgear.dataapi.gear.GearSource
 import gg.xp.xivgear.dataapi.models.*
@@ -22,9 +23,9 @@ class FullData implements Serializable {
 	// The persistence later avoids conflicts between concurrently-running versions by
 	// using a different object storage key based on the serialVersionUID
 	@Serial
-	static final long serialVersionUID = 15
+	static final long serialVersionUID = 16
 
-	final List<String> versions
+	final List<GameVersion> versions
 	final List<BaseParam> baseParams
 	final List<ItemBase> itemBases
 	final List<ItemLevel> itemLevels
