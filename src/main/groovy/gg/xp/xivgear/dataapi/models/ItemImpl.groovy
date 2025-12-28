@@ -118,7 +118,8 @@ class ItemImpl implements Item {
 		return switch (itemSpecialBonus) {
 			case 7 -> SpecialStatType.Eureka
 			case 8 -> SpecialStatType.Bozja
-			case 9 -> SpecialStatType.OccultCrescent
+			// 10 is the Occult Crescent *set* - client still needs to understand how set bonuses work.
+			case 9, 10 -> SpecialStatType.OccultCrescent
 			default -> null
 		}
 	}
