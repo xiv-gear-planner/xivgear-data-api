@@ -65,4 +65,9 @@ public interface Item extends ItemBase {
 	 * returns the same as {@link #getDefensePhys()} ()}.
 	 */
 	int getDefensePhysHQ();
+
+	/**
+	 * @return The number of equipped items in the set that you must equip to activate set bonuses.
+	 */
+	int getSetSize();
 }
