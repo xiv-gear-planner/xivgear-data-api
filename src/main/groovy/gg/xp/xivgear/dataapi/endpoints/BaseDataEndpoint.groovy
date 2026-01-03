@@ -8,6 +8,7 @@ import io.micronaut.core.annotation.NonNull
 import io.micronaut.http.HttpHeaders
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
+import jakarta.annotation.Nullable
 
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -24,8 +25,8 @@ import java.time.temporal.ChronoUnit
  *     <li>Returning 304 Not Modified when the client already has the newest data.</li>
  * </ul>
  *
- * @param <In>      A type that encompasses whatever necessary parameters.
- * @param <Out>     The response object type.
+ * @param <In>       A type that encompasses whatever necessary parameters.
+ * @param <Out>      The response object type.
  */
 @TupleConstructor(includeFields = true, defaults = false)
 @CompileStatic
@@ -37,11 +38,13 @@ abstract class BaseDataEndpoint<In, Out> {
 	 * Turn a request into the content of the request. Will only be invoked if the DataManager is ready, and the
 	 * client's last-modified header is not newer than the data.
 	 *
+	 * If you return a null from this method, then the endpoint will return a 404.
+	 *
 	 * @param data
 	 * @param input
 	 * @return
 	 */
-	protected abstract Out getContent(FullData data, In input);
+	protected abstract @Nullable Out getContent(FullData data, In input);
 
 	protected HttpResponse<Out> makeResponse(@NonNull HttpRequest<?> request, In input) {
 		// First check - is the DM ready?
@@ -62,6 +65,9 @@ abstract class BaseDataEndpoint<In, Out> {
 			// Calls the abstract method to get the actual content for the response.
 			// Note that this only happens if we have determined that we cannot send back a "not modified" response.
 			Out content = getContent(data, input)
+			if (content == null) {
+				return HttpResponse.status(404, "Not found")
+			}
 			return HttpResponse.ok(content).with {
 				// Add last modified header
 				header HttpHeaders.LAST_MODIFIED, dataModified.format(DateTimeFormatter.RFC_1123_DATE_TIME)

@@ -76,4 +76,17 @@ public interface ItemBase extends XivApiObject {
 	@XivApiRaw
 	@JsonIgnore
 	int getItemSpecialBonus();
+
+	/**
+	 * @return For set bonuses, this is the required count of items.
+	 */
+	@JsonIgnore
+	int getItemSpecialBonusParam();
+
+	/**
+	 * @return For set bonuses, this is the ItemSeries ID of the required item set.
+	 */
+	@XivApiRaw
+	int getItemSeries();
+
 }
