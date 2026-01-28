@@ -38,6 +38,7 @@ class DataManager implements AutoCloseable {
 	private final DataPersistence pers
 	private volatile boolean stop
 
+	// TODO: make these app properties
 	private static final int minIlvl = 290
 	private static final int maxIlvl = 999
 	private static final int minIlvlFood = 430
