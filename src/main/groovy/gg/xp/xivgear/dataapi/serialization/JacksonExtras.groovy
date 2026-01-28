@@ -12,15 +12,20 @@ import io.micronaut.json.JsonMapper
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 
+/**
+ * This class does two things - replaces default micronaut serialization, and
+ * installs the Jdk8 Jackson module.
+ */
 @Factory
 @Context
 class JacksonExtras {
 
 	@Inject
 	void customize(ObjectMapper mapper) {
-//		mapper.setPropertyNamingStrategy(new CapitalizedPropertyNamingStrategy())
-		mapper.setSerializationInclusion(JsonInclude.Include.ALWAYS)
-		mapper.registerModule(new Jdk8Module())
+		mapper.tap {
+			serializationInclusion = JsonInclude.Include.ALWAYS
+			registerModule(new Jdk8Module())
+		}
 	}
 
 	@Singleton

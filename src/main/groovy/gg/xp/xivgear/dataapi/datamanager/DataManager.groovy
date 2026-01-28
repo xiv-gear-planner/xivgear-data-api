@@ -38,6 +38,7 @@ class DataManager implements AutoCloseable {
 	private final DataPersistence pers
 	private volatile boolean stop
 
+	// TODO: make these app properties
 	private static final int minIlvl = 290
 	private static final int maxIlvl = 999
 	private static final int minIlvlFood = 430
@@ -158,6 +159,9 @@ class DataManager implements AutoCloseable {
 					log.info "No existing data"
 					offerNewData makeData(), true
 				}
+				// Since the process of checking data can be resource-intensive, set it to lower priority for future
+				// iterations. The first iteration gets to run normally.
+				Thread.currentThread().priority = Thread.MIN_PRIORITY
 			}
 			catch (Throwable t) {
 				if (!stop) {

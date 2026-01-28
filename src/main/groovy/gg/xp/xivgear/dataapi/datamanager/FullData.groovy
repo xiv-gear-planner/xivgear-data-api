@@ -23,7 +23,7 @@ class FullData implements Serializable {
 	// The persistence later avoids conflicts between concurrently-running versions by
 	// using a different object storage key based on the serialVersionUID
 	@Serial
-	static final long serialVersionUID = 16
+	static final long serialVersionUID = 18
 
 	final List<GameVersion> versions
 	final List<BaseParam> baseParams
