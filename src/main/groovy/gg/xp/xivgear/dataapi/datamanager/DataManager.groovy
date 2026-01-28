@@ -158,6 +158,9 @@ class DataManager implements AutoCloseable {
 					log.info "No existing data"
 					offerNewData makeData(), true
 				}
+				// Since the process of checking data can be resource-intensive, set it to lower priority for future
+				// iterations. The first iteration gets to run normally.
+				Thread.currentThread().priority = Thread.MIN_PRIORITY
 			}
 			catch (Throwable t) {
 				if (!stop) {

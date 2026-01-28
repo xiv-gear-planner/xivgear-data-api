@@ -6,14 +6,8 @@ micronaut:
       enabled: true
   openapi:
     enabled: true
-    config:
-      # TODO: is this still used?
-      property-naming-strategy: gg.xp.xivgear.dataapi.serialization.CapitalizedPropertyNamingStrategy
   swagger:
     enabled: true
-    config:
-      # TODO: is this still used?
-      property-naming-strategy: gg.xp.xivgear.dataapi.serialization.CapitalizedPropertyNamingStrategy
   swagger-ui:
     enabled: true
   router:
@@ -32,15 +26,6 @@ micronaut:
         enabled: true
         path: ${LOCAL_STORAGE_DIR:persistence}
 
-
-  jackson:
-    enabled: true
-  serde:
-    enabled: false
-  http:
-    services:
-      - id: json
-        json-mapper: jackson
 
 xivapi:
   baseUri: https://bm.xivgear.app/api/1

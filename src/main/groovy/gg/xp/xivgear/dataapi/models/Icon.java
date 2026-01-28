@@ -14,8 +14,13 @@ public interface Icon extends XivApiStruct {
 	@XivApiField("path_hr1")
 	XivApiAsset<ImageFormat> getAssetPathHD();
 
+	@Deprecated
 	default URI getPngIconUrl() {
 		return getAssetPathHD().getURI(ImageFormat.PNG);
+	}
+
+	default URI getUrl() {
+		return getAssetPathHD().getURI(ImageFormat.WEBP);
 	}
 
 }

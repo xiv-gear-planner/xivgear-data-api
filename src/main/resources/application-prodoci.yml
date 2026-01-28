@@ -1,7 +1,4 @@
 micronaut:
-  environment:
-    name: prodoci
-
   object-storage:
     default-bucket: ${OBJECT_STORAGE_BUCKET_NAME:xivgear-data}
     oracle-cloud:
