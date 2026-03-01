@@ -88,6 +88,25 @@ class DatamanagerTest {
 			// The game files store +haste (i.e. faster) as a negative modifier
 			Assertions.assertEquals(-3, augLawOrderHealChest.baseParamMapSpecial[47])
 		}
+		var assertAcqSrc = { int itemId, GearAcquisitionSource acqSource ->
+			var item = fd.items.find { it.rowId == itemId }
+			Assertions.assertEquals acqSource, item.acquisitionSource
+		};
+		// More acquisition source tests
+		{
+			// Test Memoria Miseria Ex acquisition source
+			assertAcqSrc 30168, GearAcquisitionSource.ExtremeTrial
+			// Empyrean (SB deep dungeon)
+			assertAcqSrc 27380, GearAcquisitionSource.DeepDungeon
+			// Enaretos (Eureka Orthos)
+			assertAcqSrc 39221, GearAcquisitionSource.DeepDungeon
+			// Sacramental (Pilgrim's Traverse)
+			assertAcqSrc 47065, GearAcquisitionSource.DeepDungeon
+			// Bozjan Earring
+			assertAcqSrc 31393, GearAcquisitionSource.FieldOperation
+			// Azeyma's Earring (Preorder)
+			assertAcqSrc 41081, GearAcquisitionSource.Other
+		}
 
 		// Now serialize and de-serialize
 		byte[] dataSerial

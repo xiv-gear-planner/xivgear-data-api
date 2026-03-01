@@ -15,8 +15,12 @@ class GearSource {
 			switch (rarity) {
 				case 1: {
 					// Normal item
-					// For gear items, this means it is crafted
-					return Crafted
+					// For most gear items, this means it is crafted. However, things like pre-order earrings are an exception.
+					boolean isCraftable = fd.itemsWithRecipes.contains(rowId)
+					if (isCraftable) {
+						return Crafted
+					}
+					return Other
 				}
 				case 2: {
 					// Green item
@@ -34,6 +38,10 @@ class GearSource {
 							return Crafted
 						}
 						else {
+							// Bozjan Earring
+							if (rowId == 31393) {
+								return FieldOperation
+							}
 							return Dungeon
 						}
 					}
@@ -72,6 +80,9 @@ class GearSource {
 						if (name.contains("Ultimate")) {
 							return Ultimate
 						}
+						else if (ilvl == 375 && name.endsWith("Ultima")) {
+							return Ultimate
+						}
 						else if (name.contains("Exquisite")) {
 							return Criterion
 						}
@@ -99,6 +110,11 @@ class GearSource {
 							return ExtremeTrial
 						}
 						else {
+							// Memoria Miseria Extreme
+							if (ilvl == 480 && name.startsWith("Idealized")) {
+								// TODO: Should this be "Relic" or "Extreme"?
+								return ExtremeTrial
+							}
 							// TODO: shops needed for this
 							return Unknown
 //							boolean hasShop = true
@@ -113,6 +129,15 @@ class GearSource {
 						}
 					}
 					else if (GearLevels.isExTrialLevel(ilvl) && isWeapon) {
+						if (ilvl == 365 && name.startsWith("Empyrean")) {
+							return DeepDungeon
+						}
+						else if (ilvl == 625 && name.startsWith("Enaretos")) {
+							return DeepDungeon
+						}
+						else if (ilvl == 755 && name.startsWith("Sacramental")) {
+							return DeepDungeon
+						}
 						return ExtremeTrial
 					}
 					break
