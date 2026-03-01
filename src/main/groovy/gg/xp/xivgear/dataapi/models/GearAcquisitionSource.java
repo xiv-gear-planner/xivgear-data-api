@@ -14,6 +14,8 @@ public enum GearAcquisitionSource {
 	Artifact,
 	AllianceRaid,
 	Criterion,
+	DeepDungeon,
+	FieldOperation,
 	Other,
 	Custom,
 	Unknown
