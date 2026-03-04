@@ -115,7 +115,10 @@ class DatamanagerTest {
 			oos.writeObject fd
 			oos.flush()
 			dataSerial = baos.toByteArray()
-			log.info "Serialized"
+			// Impact of xivapi-java change to serialize a KeyedAlikeMap
+			// Before: 19101423 bytes
+			// After:   9211292 bytes
+			log.info "Serialized ({} bytes)", dataSerial.length
 		}
 		FullData deserialized
 		try (ByteArrayInputStream bais = new ByteArrayInputStream(dataSerial)
