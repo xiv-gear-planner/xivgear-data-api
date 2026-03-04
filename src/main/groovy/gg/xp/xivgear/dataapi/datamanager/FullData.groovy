@@ -36,7 +36,10 @@ class FullData implements Serializable {
 	final Instant timestamp = Instant.now()
 	private transient List<Item> items
 
-	void finishItems() {
+	/**
+	 * This method is responsible for processing the raw item data from ItemBases into Items, since getAcquisitionS
+	 */
+	private void finishItems() {
 		// Used to determine acq source for un-augmented tome items
 		Set<String> itemNames = new HashSet<>()
 		itemBases.each {
@@ -49,6 +52,7 @@ class FullData implements Serializable {
 	}
 
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		// After deserialization, we need to initialize the transient field
 		ois.defaultReadObject()
 		finishItems()
 	}
