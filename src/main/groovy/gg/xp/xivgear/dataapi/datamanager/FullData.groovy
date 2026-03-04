@@ -14,7 +14,7 @@ import java.time.Instant
  * FullData represents a full "data pack" from xivapi
  */
 @CompileStatic
-@TupleConstructor(includeFields = true, defaultsMode = DefaultsMode.AUTO, post = {
+@TupleConstructor(includeFields = true, defaultsMode = DefaultsMode.OFF, post = {
 	this.finishItems()
 }, excludes = ['timestamp', 'items'])
 class FullData implements Serializable {
@@ -23,7 +23,7 @@ class FullData implements Serializable {
 	// The persistence later avoids conflicts between concurrently-running versions by
 	// using a different object storage key based on the serialVersionUID
 	@Serial
-	static final long serialVersionUID = 19
+	static final long serialVersionUID = 20
 
 	final List<GameVersion> versions
 	final List<BaseParam> baseParams
