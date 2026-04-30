@@ -248,7 +248,8 @@ class DataManager implements AutoCloseable {
 					lte("LevelItem", maxIlvl),
 					gt("EquipSlotCategory", 0),
 					or(jobs
-							.findAll { it.rowId > 0 }
+							// TODO: update 42 once BST is added to ClassJobCategory
+							.findAll { it.rowId > 0 && it.rowId <= 42 }
 							.collect {
 								return eq("ClassJobCategory.${it.abbreviation}", 1)
 							}
