@@ -38,14 +38,27 @@ class DataManager implements AutoCloseable {
 	private final DataPersistence pers
 	private volatile boolean stop
 
-	// TODO: make these app properties
-	private static final int minIlvl = 290
-	private static final int maxIlvl = 999
-	private static final int minIlvlFood = 430
-	private static final int maxIlvlFood = 999
+	private final int minIlvl
+	private final int maxIlvl
+	private final int minIlvlFood
+	private final int maxIlvlFood
+	private final int minIlvlBlu
 
-	DataManager(DataPersistence pers, @Value('${xivapi.baseUri}') Optional<URI> xivApiUri) {
+	DataManager(
+			DataPersistence pers,
+			@Value('${xivapi.baseUri}') Optional<URI> xivApiUri,
+			@Value('${data-manager.minIlvl:290}') int minIlvl,
+			@Value('${data-manager.maxIlvl:999}') int maxIlvl,
+			@Value('${data-manager.minIlvlFood:430}') int minIlvlFood,
+			@Value('${data-manager.maxIlvlFood:999}') int maxIlvlFood,
+			@Value('${data-manager.minIlvlBlu:130}') int minIlvlBlu
+	) {
 		this.pers = pers
+		this.minIlvl = minIlvl
+		this.maxIlvl = maxIlvl
+		this.minIlvlFood = minIlvlFood
+		this.maxIlvlFood = maxIlvlFood
+		this.minIlvlBlu = minIlvlBlu
 		client = new XivApiClient(XivApiSettings.newBuilder().with {
 			xivApiUri.ifPresent {
 				baseUri = it
@@ -243,18 +256,25 @@ class DataManager implements AutoCloseable {
 			log.info "Loaded ${jobs.size()} ClassJobs"
 
 			log.info "Loading Items"
-			SearchFilter itemFilter = and(
-					gte("LevelItem", minIlvl),
-					lte("LevelItem", maxIlvl),
-					gt("EquipSlotCategory", 0),
-					or(jobs
-							// TODO: update 42 once BST is added to ClassJobCategory
+			SearchFilter itemFilter = (
+					gte("LevelItem", minIlvl)
+//							& lte("LevelItem", maxIlvl),
+							& gt("EquipSlotCategory", 0)
+							& or(jobs
+					// TODO: update 42 once BST is added to ClassJobCategory
 							.findAll { it.rowId > 0 && it.rowId <= 42 }
 							.collect {
 								return eq("ClassJobCategory.${it.abbreviation}", 1)
-							}
-					)
+							})
+			) | (
+					// BLU is interested in lower-ilvl items for 50/60 sheets
+					gte("LevelItem", minIlvlBlu)
+							& gt("EquipSlotCategory", 0)
+							& or(eq("ClassJobCategory.BLU", 1))
+							// Filter out aetherial items
+							& ~(eq("Rarity", 7))
 			)
+
 			List<ItemBase> itemBases = client.getSearchIterator(ItemBase, itemFilter).toList().toSorted { it.rowId }
 			Set<Integer> itemIds = itemBases.collect { it.rowId }.toSet()
 			log.info "Loaded ${itemBases.size()} Items"

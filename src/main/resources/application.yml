@@ -29,3 +29,10 @@ micronaut:
 
 xivapi:
   baseUri: https://bm.xivgear.app/api/1
+
+data-manager:
+  minIlvl: 290
+  maxIlvl: 999
+  minIlvlFood: 430
+  maxIlvlFood: 999
+  minIlvlBlu: 115
