@@ -1,10 +1,7 @@
 package gg.xp.xivgear.dataapi.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import gg.xp.xivapi.annotations.XivApiThis;
 import gg.xp.xivapi.clienttypes.XivApiObject;
-
-import java.util.Map;
 
 public interface ItemLevel extends XivApiObject {
 
@@ -17,10 +14,11 @@ public interface ItemLevel extends XivApiObject {
 //	int getBlockRate();
 //	int getBlockStrength();
 //	int getBluntResistance();
-//	int getCP();
+	@JsonProperty("CP")
+	int getCP();
 //	int getCarefulDesynthesis();
-//	int getControl();
-//	int getCraftsmanship();
+	int getControl();
+	int getCraftsmanship();
 	int getCriticalHit();
 //	int getCriticalHitEvasion();
 //	int getCriticalHitPower();
@@ -39,8 +37,9 @@ public interface ItemLevel extends XivApiObject {
 //	int getEnmityReduction();
 //	int getEvasion();
 //	int getFireResistance();
-//	int getGP();
-//	int getGathering();
+	@JsonProperty("GP")
+	int getGP();
+	int getGathering();
 	@JsonProperty("HP")
 	int getHP();
 //	int getHaste();
@@ -58,7 +57,7 @@ public interface ItemLevel extends XivApiObject {
 //	int getMorale();
 //	int getMovementSpeed();
 //	int getParalysisResistance();
-//	int getPerception();
+	int getPerception();
 //	int getPetrificationResistance();
 	int getPhysicalDamage();
 //	int getPiercingResistance();

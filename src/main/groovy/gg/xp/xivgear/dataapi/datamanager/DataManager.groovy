@@ -251,8 +251,9 @@ class DataManager implements AutoCloseable {
 			log.info "Loaded ${itemLevels.size()} ItemLevels"
 
 			log.info "Loading ClassJob"
-			SearchFilter combatJobsOnly = gt("PrimaryStat", 0)
-			List<ClassJob> jobs = client.getSearchIterator(ClassJob, combatJobsOnly).toList().toSorted { it.rowId }
+//			SearchFilter combatJobsOnly = gt("PrimaryStat", 0)
+			List<ClassJob> jobs = client.getListIterator(ClassJob).toList().findAll { it.rowId > 0 }.toSorted { it.rowId }
+//			List<ClassJob> jobs = client.getSearchIterator(ClassJob, combatJobsOnly).toList().toSorted { it.rowId }
 			log.info "Loaded ${jobs.size()} ClassJobs"
 
 			log.info "Loading Items"
