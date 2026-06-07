@@ -42,7 +42,7 @@ class EndpointTest {
 	}
 
 	@Test
-	@Timeout(120)
+	@Timeout(180)
 	void testSingleJobItems() {
 		dm.dataFuture.get()
 		HttpRequest<?> req = HttpRequest.GET(server.URI.resolve("/Items?job=WHM"))
@@ -60,7 +60,7 @@ class EndpointTest {
 	}
 
 	@Test
-	@Timeout(120)
+	@Timeout(180)
 	void testMultiJobItems() {
 		dm.dataFuture.get()
 		HttpRequest<?> req = HttpRequest.GET(server.URI.resolve("/Items?job=WHM,PLD,MNK"))

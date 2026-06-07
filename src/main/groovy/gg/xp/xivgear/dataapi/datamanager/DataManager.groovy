@@ -251,8 +251,7 @@ class DataManager implements AutoCloseable {
 			log.info "Loaded ${itemLevels.size()} ItemLevels"
 
 			log.info "Loading ClassJob"
-			SearchFilter combatJobsOnly = gt("PrimaryStat", 0)
-			List<ClassJob> jobs = client.getSearchIterator(ClassJob, combatJobsOnly).toList().toSorted { it.rowId }
+			List<ClassJob> jobs = client.getListIterator(ClassJob).toList().findAll { it.rowId > 0 }.toSorted { it.rowId }
 			log.info "Loaded ${jobs.size()} ClassJobs"
 
 			log.info "Loading Items"
@@ -260,12 +259,6 @@ class DataManager implements AutoCloseable {
 					gte("LevelItem", minIlvl)
 //							& lte("LevelItem", maxIlvl),
 							& gt("EquipSlotCategory", 0)
-							& or(jobs
-					// TODO: update 42 once BST is added to ClassJobCategory
-							.findAll { it.rowId > 0 && it.rowId <= 42 }
-							.collect {
-								return eq("ClassJobCategory.${it.abbreviation}", 1)
-							})
 			) | (
 					// BLU is interested in lower-ilvl items for 50/60 sheets
 					gte("LevelItem", minIlvlBlu)
