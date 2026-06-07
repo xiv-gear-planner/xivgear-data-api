@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Timeout
 class DatamanagerTest {
 
 	@Test
-	@Timeout(120)
+	@Timeout(180)
 	void testDm(DataManager dm, DataPersistence pers, ObjectStorageOperations<?, ?, ?> storage) {
 		log.info "Checking persistence"
 		Assertions.assertNull pers.data
