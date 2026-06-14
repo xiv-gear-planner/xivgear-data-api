@@ -266,6 +266,10 @@ class DataManager implements AutoCloseable {
 							& or(eq("ClassJobCategory.BLU", 1))
 							// Filter out aetherial items
 							& ~(eq("Rarity", 7))
+			) | (
+					// FSH offhands
+					eq("ClassJobCategory.FSH", 1)
+							& eq("EquipSlotCategory", 2)
 			)
 
 			List<ItemBase> itemBases = client.getSearchIterator(ItemBase, itemFilter).toList().toSorted { it.rowId }

@@ -107,6 +107,12 @@ class DatamanagerTest {
 			// Azeyma's Earring (Preorder)
 			assertAcqSrc 41081, GearAcquisitionSource.Other
 		}
+		// FSH offhand should be included despite not being high enough ilvl
+		{
+			var fishOH = fd.items.find { it.rowId == 17726 }
+			Assertions.assertNotNull fishOH
+			Assertions.assertEquals 17726, fishOH.rowId
+		}
 
 		// Now serialize and de-serialize
 		byte[] dataSerial
