@@ -12,6 +12,10 @@ class GearSource {
 
 	static GearAcquisitionSource getAcquisitionSource(FullData fd, ItemBase base, Set<String> allItemNames) {
 		return base.with {
+			if (base.classJobCategory.jobs['CRP']) {
+				// Workaround for doh/dol jobs - acquisition source is not accurate at the moment
+				return Unknown
+			}
 			switch (rarity) {
 				case 1: {
 					// Normal item
