@@ -270,6 +270,16 @@ class DataManager implements AutoCloseable {
 					// FSH offhands
 					eq("ClassJobCategory.FSH", 1)
 							& eq("EquipSlotCategory", 2)
+			) | (
+					// DoH/DoL stuff
+					// GP
+					(eq(any("BaseParam"), 10)
+							// CP
+							| eq(any("BaseParam"), 11)
+							| eq(any("BaseParam"), 70)
+							| eq(any("BaseParam"), 71)
+							| eq(any("BaseParam"), 72)
+							| eq(any("BaseParam"), 73))
 			)
 
 			List<ItemBase> itemBases = client.getSearchIterator(ItemBase, itemFilter).toList().toSorted { it.rowId }
