@@ -280,6 +280,9 @@ class DataManager implements AutoCloseable {
 							| eq(any("BaseParam"), 71)
 							| eq(any("BaseParam"), 72)
 							| eq(any("BaseParam"), 73))
+			) | (
+					// BST - we don't have a BST field on exdschema yet
+					(strPart("ClassJobCategory.Name", "BST"))
 			)
 
 			List<ItemBase> itemBases = client.getSearchIterator(ItemBase, itemFilter).toList().toSorted { it.rowId }
