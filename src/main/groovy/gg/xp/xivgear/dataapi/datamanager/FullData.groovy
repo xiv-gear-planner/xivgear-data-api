@@ -32,6 +32,7 @@ class FullData implements Serializable {
 	final List<ClassJob> jobs
 	final List<Materia> materia
 	final List<Food> food
+	final List<Food> medicines
 	final Set<Integer> itemsWithRecipes
 	final Instant timestamp = Instant.now()
 	private transient List<Item> items

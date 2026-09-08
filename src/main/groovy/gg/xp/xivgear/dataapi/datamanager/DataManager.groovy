@@ -336,35 +336,66 @@ class DataManager implements AutoCloseable {
 			List<Materia> materia = client.getSearchIterator(Materia, materiaFilter).toList().<Materia> toSorted { it.rowId }
 			log.info "Loaded ${materia.size()} Materia"
 
-			log.info "Loading Food"
+			log.info "Loading Food Bonuses"
 			Map<Integer, FoodItemFood> foodBonuses = [:]
 
-			SearchFilter foodFilter = and(
-					eq("ItemSearchCategory", 45),
-					gte("LevelItem", minIlvlFood),
-					lte("LevelItem", maxIlvlFood),
-			)
-			Iterator<FoodItemBase> bases = client.getSearchIterator(FoodItemBase, foodFilter)
-
+			// Food bonuses are their own sheet. The food item's ItemAction.Data field is an array, in which the
+			// second element points to an entry on the FoodItemFood table.
 			client.getListIterator(FoodItemFood).each {
 				foodBonuses[it.rowId] = it
 			}
+			log.info "Loaded ${foodBonuses.size()} Food Bonuses"
 
-			List<Food> food = bases.collectMany {
-				int bonusId = it.foodItemId
-				FoodItemFood itemFood = foodBonuses[bonusId]
-				if (itemFood == null) {
-					log.error "Food item ${it} did not have corresponding ItemFood ID ${bonusId}"
-					return [] as List<Food>
+			log.info "Loading Food"
+			List<Food> food;
+
+			{
+				SearchFilter foodFilter = eq("ItemSearchCategory", 45)
+						& gte("LevelItem", minIlvlFood)
+						& lte("LevelItem", maxIlvlFood)
+				Iterator<FoodItemBase> bases = client.getSearchIterator(FoodItemBase, foodFilter)
+
+				food = bases.collectMany {
+					int bonusId = it.foodItemId
+					FoodItemFood itemFood = foodBonuses[bonusId]
+					if (itemFood == null) {
+						log.error "Food item ${it} did not have corresponding ItemFood ID ${bonusId}"
+						return [] as List<Food>
+					}
+					else {
+						return [new FoodImpl(it, itemFood)] as List<Food>
+					}
 				}
-				else {
-					return [new FoodImpl(it, itemFood)] as List<Food>
-				}
+				food.<Food> sort { it.rowId }
+				log.info "Loaded ${food.size()} Foods"
 			}
-			food.<Food> sort { it.rowId }
-			log.info "Loaded ${food.size()} Foods"
 
-			def data = new FullData(versions, baseParams, itemBases, itemLevels, jobs, materia, food, itemsWithRecipes)
+			List<Food> medicine;
+			{
+				log.info "Loading Medicine"
+				SearchFilter medFilter = eq("ItemSearchCategory", 43)
+						& gte("LevelItem", minIlvlFood)
+						& lte("LevelItem", maxIlvlFood)
+						// Ignore healing items
+						& ~eq("ItemAction.Action", 847)
+				Iterator<FoodItemBase> medBases = client.getSearchIterator(FoodItemBase, medFilter)
+
+				medicine = medBases.collectMany {
+					int bonusId = it.foodItemId
+					FoodItemFood itemFood = foodBonuses[bonusId]
+					if (itemFood == null) {
+						log.error "Food item ${it} did not have corresponding ItemFood ID ${bonusId}"
+						return [] as List<Food>
+					}
+					else {
+						return [new FoodImpl(it, itemFood)] as List<Food>
+					}
+				}
+				food.<Food> sort { it.rowId }
+				log.info "Loaded ${food.size()} Medicines"
+			}
+
+			def data = new FullData(versions, baseParams, itemBases, itemLevels, jobs, materia, food, medicine, itemsWithRecipes)
 			return data
 		}
 		catch (Throwable t) {
