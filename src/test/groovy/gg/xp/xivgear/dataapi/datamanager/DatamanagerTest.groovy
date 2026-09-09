@@ -88,6 +88,16 @@ class DatamanagerTest {
 			// The game files store +haste (i.e. faster) as a negative modifier
 			Assertions.assertEquals(-3, augLawOrderHealChest.baseParamMapSpecial[47])
 		}
+		// Test Beastmaster Crucible Items
+		{
+			Item guttlerUnleashed = fd.items.find { it.rowId == 51739 }
+			Assertions.assertEquals SpecialStatType.Crucible, guttlerUnleashed.specialStatType
+			// STR
+			Assertions.assertEquals(10, guttlerUnleashed.baseParamMapSpecial[1])
+			// Vit
+			Assertions.assertEquals(10, guttlerUnleashed.baseParamMapSpecial[3])
+
+		}
 		var assertAcqSrc = { int itemId, GearAcquisitionSource acqSource ->
 			var item = fd.items.find { it.rowId == itemId }
 			Assertions.assertEquals acqSource, item.acquisitionSource
