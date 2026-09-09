@@ -1,6 +1,6 @@
 package gg.xp.xivgear.dataapi.datamanager
 
-import com.oracle.bmc.http.client.HttpClientBuilder
+
 import gg.xp.xivapi.XivApiClient
 import gg.xp.xivapi.clienttypes.GameVersion
 import gg.xp.xivapi.clienttypes.XivApiObject
@@ -16,7 +16,6 @@ import io.micronaut.context.annotation.Context
 import io.micronaut.context.annotation.Value
 import jakarta.inject.Singleton
 
-import java.net.http.HttpClient
 import java.time.Duration
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
