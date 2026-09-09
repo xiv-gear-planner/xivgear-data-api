@@ -19,10 +19,19 @@ public interface ClassJobCategory extends XivApiObject {
 
 	String getName();
 
+	@JsonIgnore
+	boolean getUnknown0();
+
 	// Temporary hack
 	default Map<String, Boolean> getJobs() {
-		Map<String, Boolean> jobsOriginal = new HashMap<>(getJobsInternal());
-		jobsOriginal.put("BST", getName().contains("BST"));
-		return jobsOriginal;
+		Map<String, Boolean> jobsOriginal = getJobsInternal();
+		if (jobsOriginal.containsKey("BST")) {
+			return jobsOriginal;
+		}
+		else {
+			Map<String, Boolean> jobs = new HashMap<>(jobsOriginal);
+			jobs.put("BST", getUnknown0());
+			return jobs;
+		}
 	}
 }
