@@ -5,6 +5,7 @@ import groovy.transform.CompileStatic
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.context.annotation.Property
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import jakarta.inject.Inject
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.function.Executable
 
 @CompileStatic
 @MicronautTest
+@Property(name = "micronaut.http.client.max-content-length", value = "26214400")
 class EndpointTest {
 
 	@Singleton
