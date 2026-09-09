@@ -119,6 +119,7 @@ class ItemImpl implements Item {
 			case 7 -> SpecialStatType.Eureka
 			case 8 -> SpecialStatType.Bozja
 			case 9 -> SpecialStatType.OccultCrescent
+			case 11 -> SpecialStatType.Crucible
 			default -> null
 		}
 	}
