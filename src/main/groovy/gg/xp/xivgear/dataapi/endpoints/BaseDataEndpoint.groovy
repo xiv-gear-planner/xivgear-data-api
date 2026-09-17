@@ -3,6 +3,7 @@ package gg.xp.xivgear.dataapi.endpoints
 import gg.xp.xivgear.dataapi.datamanager.DataManager
 import gg.xp.xivgear.dataapi.datamanager.FullData
 import groovy.transform.CompileStatic
+import groovy.transform.InheritConstructors
 import groovy.transform.TupleConstructor
 import io.micronaut.core.annotation.NonNull
 import io.micronaut.http.HttpHeaders

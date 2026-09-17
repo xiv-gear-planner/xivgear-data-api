@@ -7,4 +7,8 @@ public enum SpecialStatType {
 	Eureka,
 	Bozja,
 	OccultCrescent,
+	/**
+	 * Beastmaster Crucible
+	 */
+	Crucible,
 }

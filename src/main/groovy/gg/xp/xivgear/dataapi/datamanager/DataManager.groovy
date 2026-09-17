@@ -1,5 +1,6 @@
 package gg.xp.xivgear.dataapi.datamanager
 
+
 import gg.xp.xivapi.XivApiClient
 import gg.xp.xivapi.clienttypes.GameVersion
 import gg.xp.xivapi.clienttypes.XivApiObject
@@ -280,6 +281,11 @@ class DataManager implements AutoCloseable {
 							| eq(any("BaseParam"), 71)
 							| eq(any("BaseParam"), 72)
 							| eq(any("BaseParam"), 73))
+			) | (
+					// BST - we don't have a BST field on exdschema yet
+					(isTrue("ClassJobCategory.Unknown0"))
+							& gt("EquipSlotCategory", 0)
+							& ~(eq("Rarity", 7))
 			)
 
 			List<ItemBase> itemBases = client.getSearchIterator(ItemBase, itemFilter).toList().toSorted { it.rowId }
@@ -418,7 +424,7 @@ class DataManager implements AutoCloseable {
 			}
 			return true
 		}
-		catch (Throwable t) {
+		catch (Throwable ignored) {
 			return false
 		}
 	}
