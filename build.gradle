@@ -17,9 +17,9 @@ micronaut {
 	testRuntime "junit5"
 	dockerfile {
 		args "-XX:+UseG1GC"
-		args "-XX:MinHeapFreeRatio=15"
-		args "-XX:MaxHeapFreeRatio=30"
-		args "-XX:MaxRAMPercentage=60"
+		args "-XX:MinHeapFreeRatio=10"
+		args "-XX:MaxHeapFreeRatio=25"
+		args "-XX:MaxRAMPercentage=65"
 		// TODO measure performance impact
 		args "-XX:+UseStringDeduplication"
 	}
