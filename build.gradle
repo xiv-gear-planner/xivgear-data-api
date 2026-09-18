@@ -17,9 +17,9 @@ micronaut {
 	testRuntime "junit5"
 	dockerfile {
 		args "-XX:+UseG1GC"
-		args "-XX:MinHeapFreeRatio=15"
-		args "-XX:MaxHeapFreeRatio=30"
-		args "-XX:MaxRAMPercentage=60"
+		args "-XX:MinHeapFreeRatio=10"
+		args "-XX:MaxHeapFreeRatio=25"
+		args "-XX:MaxRAMPercentage=65"
 		// TODO measure performance impact
 		args "-XX:+UseStringDeduplication"
 	}
@@ -31,7 +31,7 @@ tasks.named('dockerfile') {
 
 dependencies {
 	implementation 'org.apache.groovy:groovy:4.0.22'
-	implementation group: 'app.xivgear', name: 'xivapi-java', version: '0.1.16'
+	implementation "app.xivgear:xivapi-java:0.1.18"
 
 	testImplementation platform('org.junit:junit-bom:5.11.0')
 	testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -55,7 +55,7 @@ dependencies {
 	// For dependency injection
 	implementation "io.micronaut:micronaut-inject"
 	// https://mvnrepository.com/artifact/jakarta.inject/jakarta.inject-api
-	implementation group: 'jakarta.inject', name: 'jakarta.inject-api', version: '2.0.1'
+	implementation "jakarta.inject:jakarta.inject-api:2.0.1"
 
 
 	// Test dependencies

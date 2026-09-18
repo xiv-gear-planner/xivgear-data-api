@@ -58,7 +58,6 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Test and publish package
-        # Sonatype central does not support snapshots
         run: ./gradlew build dockerfile
 
       - name: Build and export

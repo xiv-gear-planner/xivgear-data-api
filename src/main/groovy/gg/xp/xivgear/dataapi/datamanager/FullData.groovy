@@ -19,11 +19,12 @@ import java.time.Instant
 }, excludes = ['timestamp', 'items'])
 class FullData implements Serializable {
 
-	// ALWAYS UPDATE THIS IF CHANGING THIS CLASS OR ANYTHING ELSE IN IT
+	// ALWAYS UPDATE THIS IF CHANGING THIS CLASS OR ANYTHING ELSE IN IT!
 	// The persistence later avoids conflicts between concurrently-running versions by
-	// using a different object storage key based on the serialVersionUID
+	// using a different object storage key based on the serialVersionUID.
+	// Also update that if any dependencies change in a way that breaks serialization.
 	@Serial
-	static final long serialVersionUID = 20
+	static final long serialVersionUID = 21
 
 	final List<GameVersion> versions
 	final List<BaseParam> baseParams
@@ -32,6 +33,7 @@ class FullData implements Serializable {
 	final List<ClassJob> jobs
 	final List<Materia> materia
 	final List<Food> food
+	final List<Food> medicines
 	final Set<Integer> itemsWithRecipes
 	final Instant timestamp = Instant.now()
 	private transient List<Item> items
