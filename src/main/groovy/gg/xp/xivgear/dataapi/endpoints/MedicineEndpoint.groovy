@@ -30,7 +30,7 @@ class MedicineEndpoint extends BaseDataEndpoint<Void, Response> {
 	@Operation(summary = "Get medicine items")
 	@Get("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	HttpResponse<Response> foodItems(HttpRequest<?> request) {
+	HttpResponse<Response> medicineItems(HttpRequest<?> request) {
 		return makeResponse(request, null)
 	}
 
