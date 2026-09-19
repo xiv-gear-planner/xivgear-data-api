@@ -22,6 +22,7 @@ micronaut {
 		args "-XX:MaxRAMPercentage=65"
 		// TODO measure performance impact
 		args "-XX:+UseStringDeduplication"
+		args "-XX:NativeMemoryTracking=detail"
 	}
 }
 
