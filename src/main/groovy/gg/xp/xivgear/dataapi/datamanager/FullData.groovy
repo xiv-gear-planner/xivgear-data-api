@@ -24,7 +24,7 @@ class FullData implements Serializable {
 	// using a different object storage key based on the serialVersionUID.
 	// Also update that if any dependencies change in a way that breaks serialization.
 	@Serial
-	static final long serialVersionUID = 21
+	static final long serialVersionUID = 22
 
 	final List<GameVersion> versions
 	final List<BaseParam> baseParams

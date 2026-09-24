@@ -76,4 +76,7 @@ public interface ItemBase extends XivApiObject {
 	@XivApiRaw
 	@JsonIgnore
 	int getItemSpecialBonus();
+
+	@XivApiField("BaseParamModifier")
+	int getMeldParamIndex();
 }
