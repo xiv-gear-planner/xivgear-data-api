@@ -288,7 +288,12 @@ class DataManager implements AutoCloseable {
 							& ~(eq("Rarity", 7))
 			)
 
-			List<ItemBase> itemBases = client.getSearchIterator(ItemBase, itemFilter).toList().toSorted { it.rowId }
+			List<ItemBase> itemBases = client.getSearchIterator(ItemBase, itemFilter)
+					.stream()
+					// Remove currently-unobtainable items
+					.filter { it -> it.ilvl > 50 || !it.name.startsWith("Dated") }
+					.toList()
+					.toSorted { it.rowId }
 			Set<Integer> itemIds = itemBases.collect { it.rowId }.toSet()
 			log.info "Loaded ${itemBases.size()} Items"
 
