@@ -16,7 +16,7 @@ import java.time.Instant
 @CompileStatic
 @TupleConstructor(includeFields = true, defaultsMode = DefaultsMode.OFF, post = {
 	this.finishItems()
-}, excludes = ['timestamp', 'items'])
+}, excludes = ['timestamp', 'items', 'maxEquipLvl'])
 class FullData implements Serializable {
 
 	// ALWAYS UPDATE THIS IF CHANGING THIS CLASS OR ANYTHING ELSE IN IT!
@@ -24,7 +24,7 @@ class FullData implements Serializable {
 	// using a different object storage key based on the serialVersionUID.
 	// Also update that if any dependencies change in a way that breaks serialization.
 	@Serial
-	static final long serialVersionUID = 22
+	static final long serialVersionUID = 23
 
 	final List<GameVersion> versions
 	final List<BaseParam> baseParams
@@ -36,6 +36,7 @@ class FullData implements Serializable {
 	final List<Food> medicines
 	final Set<Integer> itemsWithRecipes
 	final Instant timestamp = Instant.now()
+	private transient int maxEquipLvl
 	private transient List<Item> items
 
 	/**
@@ -47,10 +48,15 @@ class FullData implements Serializable {
 		itemBases.each {
 			itemNames.add it.name
 		}
+		int maxEqpLvl = 0
 		items = itemBases.collect { base ->
 			GearAcquisitionSource source = GearSource.getAcquisitionSource this, base, itemNames
+			if (base.equipLevel > maxEqpLvl) {
+				maxEqpLvl = base.equipLevel
+			}
 			return new ItemImpl(base, source) as Item
 		}
+		this.maxEquipLvl = maxEqpLvl
 	}
 
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -65,6 +71,10 @@ class FullData implements Serializable {
 
 	List<Item> getItems() {
 		return items
+	}
+
+	int getMaxEquipLvl() {
+		return maxEquipLvl
 	}
 
 	@Override
