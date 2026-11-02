@@ -5,8 +5,6 @@ import gg.xp.xivapi.clienttypes.XivApiSchemaVersion
 import gg.xp.xivgear.dataapi.gear.GearSource
 import gg.xp.xivgear.dataapi.models.*
 import groovy.transform.CompileStatic
-import groovy.transform.DefaultsMode
-import groovy.transform.TupleConstructor
 
 import java.time.Instant
 
@@ -14,9 +12,6 @@ import java.time.Instant
  * FullData represents a full "data pack" from xivapi
  */
 @CompileStatic
-@TupleConstructor(includeFields = true, defaultsMode = DefaultsMode.OFF, post = {
-	this.finishItems()
-}, excludes = ['timestamp', 'items', 'maxEquipLvl'])
 class FullData implements Serializable {
 
 	// ALWAYS UPDATE THIS IF CHANGING THIS CLASS OR ANYTHING ELSE IN IT!
@@ -24,7 +19,7 @@ class FullData implements Serializable {
 	// using a different object storage key based on the serialVersionUID.
 	// Also update that if any dependencies change in a way that breaks serialization.
 	@Serial
-	static final long serialVersionUID = 23
+	static final long serialVersionUID = 24
 
 	final List<GameVersion> versions
 	final List<BaseParam> baseParams
@@ -39,6 +34,27 @@ class FullData implements Serializable {
 	private transient int maxEquipLvl
 	private transient List<Item> items
 
+	FullData(List<GameVersion> versions,
+			List<BaseParam> baseParams,
+			List<ItemBase> itemBases,
+			List<ItemLevel> itemLevels,
+			List<ClassJob> jobs,
+			List<Materia> materia,
+			List<Food> food,
+			List<Food> medicines,
+			Set<Integer> itemsWithRecipes) {
+		this.versions = Collections.unmodifiableList(versions)
+		this.baseParams = Collections.unmodifiableList(baseParams)
+		this.itemBases = Collections.unmodifiableList(itemBases)
+		this.itemLevels = Collections.unmodifiableList(itemLevels)
+		this.jobs = Collections.unmodifiableList(jobs)
+		this.materia = Collections.unmodifiableList(materia)
+		this.food = Collections.unmodifiableList(food)
+		this.medicines = Collections.unmodifiableList(medicines)
+		this.itemsWithRecipes = Collections.unmodifiableSet(itemsWithRecipes)
+		finishItems()
+	}
+
 	/**
 	 * This method is responsible for processing the raw item data from ItemBases into Items, since getAcquisitionS
 	 */
@@ -49,13 +65,14 @@ class FullData implements Serializable {
 			itemNames.add it.name
 		}
 		int maxEqpLvl = 0
-		items = itemBases.collect { base ->
+		List<Item> builtItems = itemBases.collect { base ->
 			GearAcquisitionSource source = GearSource.getAcquisitionSource this, base, itemNames
 			if (base.equipLevel > maxEqpLvl) {
 				maxEqpLvl = base.equipLevel
 			}
 			return new ItemImpl(base, source) as Item
 		}
+		items = Collections.unmodifiableList(builtItems)
 		this.maxEquipLvl = maxEqpLvl
 	}
 
@@ -75,17 +92,5 @@ class FullData implements Serializable {
 
 	int getMaxEquipLvl() {
 		return maxEquipLvl
-	}
-
-	@Override
-	Object getProperty(String propertyName) {
-		Object out = super.getProperty(propertyName)
-		if (out instanceof List) {
-			return Collections.unmodifiableList(out)
-		}
-		else if (out instanceof Set) {
-			return Collections.unmodifiableSet(out)
-		}
-		return out
 	}
 }
