@@ -20,18 +20,18 @@ micronaut {
 		args "-XX:MinHeapFreeRatio=10"
 		args "-XX:MaxHeapFreeRatio=25"
 		args "-XX:MaxRAMPercentage=65"
-		// TODO measure performance impact
 		args "-XX:+UseStringDeduplication"
+		args "-XX:+UseCompactObjectHeaders"
 		args "-XX:NativeMemoryTracking=detail"
 	}
 }
 
 tasks.named('dockerfile') {
-	baseImage = 'eclipse-temurin:21'
+	baseImage = 'eclipse-temurin:25'
 }
 
 dependencies {
-	implementation 'org.apache.groovy:groovy:4.0.22'
+	implementation 'org.apache.groovy:groovy:6.0.0'
 	implementation "app.xivgear:xivapi-java:0.1.18"
 
 	testImplementation platform('org.junit:junit-bom:5.11.0')
@@ -96,8 +96,11 @@ application {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 tasks.withType(GroovyCompile).configureEach {
