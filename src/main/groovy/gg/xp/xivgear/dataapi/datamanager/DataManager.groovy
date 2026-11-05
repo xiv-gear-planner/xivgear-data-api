@@ -44,15 +44,19 @@ class DataManager implements AutoCloseable {
 	private final int minIlvlFood
 	private final int maxIlvlFood
 	private final int minIlvlBlu
+	private final int sleepBaseSeconds
+	private final int sleepRandomExtraSeconds
 
 	DataManager(
 			DataPersistence pers,
 			@Value('${xivapi.baseUri}') Optional<URI> xivApiUri,
-			@Value('${data-manager.minIlvl:290}') int minIlvl,
-			@Value('${data-manager.maxIlvl:999}') int maxIlvl,
-			@Value('${data-manager.minIlvlFood:430}') int minIlvlFood,
-			@Value('${data-manager.maxIlvlFood:999}') int maxIlvlFood,
-			@Value('${data-manager.minIlvlBlu:130}') int minIlvlBlu
+			@Value('${data-manager.ilvlRange.minIlvl:290}') int minIlvl,
+			@Value('${data-manager.ilvlRange.maxIlvl:999}') int maxIlvl,
+			@Value('${data-manager.ilvlRange.minIlvlFood:430}') int minIlvlFood,
+			@Value('${data-manager.ilvlRange.maxIlvlFood:999}') int maxIlvlFood,
+			@Value('${data-manager.ilvlRange.minIlvlBlu:130}') int minIlvlBlu,
+			@Value('${data-manager.polling.sleepBaseSeconds:120}') int sleepBaseSeconds,
+			@Value('${data-manager.polling.sleepRandomExtraSeconds:10}') int sleepRandomExtraSeconds
 	) {
 		this.pers = pers
 		this.minIlvl = minIlvl
@@ -60,6 +64,9 @@ class DataManager implements AutoCloseable {
 		this.minIlvlFood = minIlvlFood
 		this.maxIlvlFood = maxIlvlFood
 		this.minIlvlBlu = minIlvlBlu
+		this.sleepBaseSeconds = sleepBaseSeconds
+		this.sleepRandomExtraSeconds = sleepRandomExtraSeconds
+		log.info("DataManager config: ilvl ${minIlvl} - ${maxIlvl}, food ${minIlvlFood} - ${maxIlvlFood}, BLU ${minIlvlBlu}, Sleep ${sleepBaseSeconds} + ${sleepRandomExtraSeconds}")
 		client = new XivApiClient(XivApiSettings.newBuilder().with {
 			xivApiUri.ifPresent {
 				baseUri = it
@@ -183,7 +190,7 @@ class DataManager implements AutoCloseable {
 				}
 			}
 			// Add some random waiting so that the workers will naturally stagger
-			Thread.sleep Duration.ofSeconds(120 + (Math.random() * 10) as int).toMillis()
+			Thread.sleep updateLoopSleepMillis()
 		}
 	}
 
@@ -209,8 +216,12 @@ class DataManager implements AutoCloseable {
 				}
 			}
 			// Add some random waiting so that the workers will naturally stagger
-			Thread.sleep Duration.ofSeconds(120 + (Math.random() * 10) as int).toMillis()
+			Thread.sleep updateLoopSleepMillis()
 		}
+	}
+
+	private long updateLoopSleepMillis() {
+		return 1000 * sleepBaseSeconds + (1000.0 * Math.random() * sleepRandomExtraSeconds) as long
 	}
 
 	private XivApiSchemaVersion getLiveSchemaVersion() {
