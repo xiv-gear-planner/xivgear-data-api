@@ -31,8 +31,12 @@ xivapi:
   baseUri: https://bm.xivgear.app/api/1
 
 data-manager:
-  minIlvl: 290
-  maxIlvl: 999
-  minIlvlFood: 430
-  maxIlvlFood: 999
-  minIlvlBlu: 115
+  ilvlRange:
+    minIlvl: 290
+    maxIlvl: 999
+    minIlvlFood: 430
+    maxIlvlFood: 999
+    minIlvlBlu: 115
+  polling:
+    sleepBaseSeconds: ${DATA_MANAGER_POLLING_SLEEP_BASE_SECONDS:120}
+    sleepRandomExtraSeconds: ${DATA_MANAGER_POLLING_SLEEP_RANDOM_EXTRA_SECONDS:10}
