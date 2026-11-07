@@ -1,14 +1,11 @@
 package gg.xp.xivgear.dataapi.persistence
 
 import gg.xp.xivgear.dataapi.datamanager.FullData
+import gg.xp.xivgear.dataapi.datamanager.FullDataHeader
 import groovy.util.logging.Slf4j
 import io.micronaut.core.annotation.Nullable
 import io.micronaut.objectstorage.ObjectStorageEntry
 import io.micronaut.objectstorage.ObjectStorageOperations
-import io.micronaut.objectstorage.configuration.ObjectStorageConfiguration
-import io.micronaut.objectstorage.local.LocalStorageConfiguration
-import io.micronaut.objectstorage.oraclecloud.OracleCloudStorageConfiguration
-import io.micronaut.objectstorage.oraclecloud.OracleCloudStorageOperations
 import io.micronaut.objectstorage.request.UploadRequest
 import jakarta.inject.Singleton
 
@@ -29,8 +26,13 @@ class DataPersistence {
 		this.storage = storage
 	}
 
+	/**
+	 * Get new data but only if it is newer than
+	 * @param inMemoryHeader
+	 * @return
+	 */
 	@Nullable
-	FullData getData() {
+	FullData getDataIfNewer(@Nullable FullDataHeader inMemoryHeader) {
 		Optional<ObjectStorageEntry<?>> raw = storage.retrieve key
 		if (raw.present) {
 			log.info "Stored data present"
@@ -38,13 +40,22 @@ class DataPersistence {
 			try (
 					GZIPInputStream gzipIn = new GZIPInputStream(entry.inputStream)
 					ObjectInputStream stream = new ObjectInputStream(gzipIn)) {
-				def object = stream.readObject()
-				if (object instanceof FullData) {
+				def storedObjectHeader = stream.readObject()
+				if (!(storedObjectHeader instanceof FullDataHeader)) {
+					log.info "Deserialization failed! Wrong header type: ${storedObjectHeader}"
+					return null
+				}
+				if (inMemoryHeader != null && !inMemoryHeader.timestamp().isBefore(storedObjectHeader.timestamp())) {
+					log.info "Stored data is not newer (In-Memory: ${inMemoryHeader.timestamp()}; Stored Object: ${storedObjectHeader.timestamp()})"
+					return null
+				}
+				def storedData = stream.readObject()
+				if (storedData instanceof FullData) {
 					log.info "Stored data successfully deserialized"
-					return object
+					return storedData
 				}
 				else {
-					log.info "Deserialization failed! Wrong type: ${object}"
+					log.info "Deserialization failed! Wrong type: ${storedData}"
 				}
 			}
 		}
@@ -64,6 +75,7 @@ class DataPersistence {
 			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()
 				 GZIPOutputStream gzipOut = new GZIPOutputStream(baos)
 				 ObjectOutputStream oos = new ObjectOutputStream(gzipOut)) {
+				oos.writeObject(data.makeHeader())
 				oos.writeObject(data)
 				oos.flush()
 				gzipOut.finish()

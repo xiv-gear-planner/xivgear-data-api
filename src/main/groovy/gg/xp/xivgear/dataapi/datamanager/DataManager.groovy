@@ -16,7 +16,6 @@ import io.micronaut.context.annotation.Context
 import io.micronaut.context.annotation.Value
 import jakarta.inject.Singleton
 
-import java.time.Duration
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 
@@ -201,7 +200,8 @@ class DataManager implements AutoCloseable {
 		while (!stop) {
 			try {
 				log.info "Persistence: Getting Data"
-				FullData fd = pers.data
+				FullData existing = dataFuture.state() == Future.State.SUCCESS ? dataFuture.get() : null
+				FullData fd = pers.getDataIfNewer(existing?.makeHeader())
 				if (fd == null) {
 					log.info "Persistence: No Data"
 				}
@@ -225,7 +225,7 @@ class DataManager implements AutoCloseable {
 	}
 
 	private XivApiSchemaVersion getLiveSchemaVersion() {
-		return client.getById(BaseParam, 1).schemaVersion
+		return client.getById(SchemaDummy, 1).schemaVersion
 	}
 
 	/**

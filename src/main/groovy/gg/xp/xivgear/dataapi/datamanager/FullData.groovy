@@ -19,7 +19,7 @@ class FullData implements Serializable {
 	// using a different object storage key based on the serialVersionUID.
 	// Also update that if any dependencies change in a way that breaks serialization.
 	@Serial
-	static final long serialVersionUID = 24
+	static final long serialVersionUID = 26
 
 	final List<GameVersion> versions
 	final List<BaseParam> baseParams
@@ -92,5 +92,9 @@ class FullData implements Serializable {
 
 	int getMaxEquipLvl() {
 		return maxEquipLvl
+	}
+
+	FullDataHeader makeHeader() {
+		return new FullDataHeader(timestamp)
 	}
 }
