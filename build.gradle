@@ -83,6 +83,14 @@ dependencies {
 	implementation project(":common-libs:logging")
 }
 
+// Micrometer
+dependencies {
+	implementation("io.micronaut.micrometer:micronaut-micrometer-core")
+	implementation("io.micronaut.micrometer:micronaut-micrometer-registry-prometheus")
+	implementation("io.micronaut:micronaut-management")
+}
+
+
 test {
 	systemProperties["junit.jupiter.execution.parallel.enabled"] = true
 	systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
