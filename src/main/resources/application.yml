@@ -35,6 +35,10 @@ micronaut:
         enabled: true
       uptime:
         enabled: true
+      netty:
+        enabled: true
+        bytebuf-allocators:
+          enabled: true
     export:
       prometheus:
         enabled: true
