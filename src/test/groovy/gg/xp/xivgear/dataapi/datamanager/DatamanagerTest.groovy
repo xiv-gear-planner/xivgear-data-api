@@ -22,7 +22,7 @@ class DatamanagerTest {
 	@Timeout(180)
 	void testDm(DataManager dm, DataPersistence pers, ObjectStorageOperations<?, ?, ?> storage) {
 		log.info "Checking persistence"
-		Assertions.assertNull pers.data
+		Assertions.assertNull pers.getDataIfNewer(null)
 		log.info "Checking object storage"
 		String storageKey = "stored-data-api-data-v" + FullData.serialVersionUID
 		Assertions.assertNull storage.retrieve(storageKey).orElse(null)
@@ -176,18 +176,18 @@ class DatamanagerTest {
 		}
 
 		log.info "Checking persistence"
-		while (pers.data == null) {
+		while (pers.getDataIfNewer(null) == null) {
 			log.info "Waiting..."
 			Thread.sleep 500
 		}
-		Assertions.assertNotNull pers.data
+		Assertions.assertNotNull pers.getDataIfNewer(null)
 		log.info "Checking object storage"
 		Assertions.assertNotNull storage.retrieve(storageKey).orElse(null)
 		log.info "Done"
 
 		// New instance that only uses persisted data
 		var dp = new DataPersistence(storage)
-		var fromPers = dp.data
+		var fromPers = dp.getDataIfNewer(null)
 		int str = 1
 		int vit = 3
 		int det = 44
